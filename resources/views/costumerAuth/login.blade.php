@@ -9,23 +9,11 @@
     <link rel="stylesheet" href="{{asset("assets/vendors/nouislider/nouislider.min.css")}}">
 @endsection
 
-@section('section-login')
-    <section class="blog-banner-area" id="category">
-        <div class="container h-100">
-            <div class="blog-banner">
-                <div class="text-center">
-                    <h1>Login / Register</h1>
-                    <nav aria-label="breadcrumb" class="banner-breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Login/Register</li>
-                        </ol>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </section>
-
+@section('main')
+	@php
+        $hideNavBar = true;
+		$hideFooter = true;
+    @endphp
     <section class="login_box_area section-margin">
 		<div class="container">
 			<div class="row">

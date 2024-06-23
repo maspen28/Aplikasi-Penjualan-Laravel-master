@@ -3,37 +3,44 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Customer extends Authenticatable {
-  use HasFactory, Notifiable;
+class Customer extends Authenticatable
+{
+    use HasFactory;
+    use Notifiable;
 
-  protected $fillable = [
-    'email',
-    'password',
-    'username',
-    'name',
-    'address',
-    'citie_id',
-    'district_id',
-  ];
+    protected $table = 'customers';
+    protected $fillable = [
+        'username',
+        'email',
+        'password',
+        'phone_number',
+        'address',
+        'citie_id',
+        'district_id',
+    ];
+    protected $hidden = ['password', 'remember_token'];
 
-  protected $hidden = [
-    'password',
-    'remember_token',
-  ];
+    public function district()
+    {
+        return $this->belongsTo(District::class);
+    }
 
-  // Relationships
-  public function district() {
-    return $this->belongsTo(District::class);
-  }
+    public function cart(){
+        return $this->hasMany(Cart::class);
+    }
 
-  public function cart() {
-    return $this->hasMany(Cart::class);
-  }
+    public function order(){
+        return $this->hasMany(Order::class);
+    }
 
-  public function order() {
-    return $this->hasMany(Order::class);
-  }
+    public function addCartCsid(){
+
+        return Cart::create([
+            'product_id' => $this->id,
+        ]);
+    }
 }
