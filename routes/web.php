@@ -108,4 +108,11 @@ Route::group(['middelware' => 'costumer'], function () {
 
     Route::get('/cities/{id}', [CartController::class, 'getCity']);
 
+    Route::get('/test', function () {
+        return response()->json(['message' => 'API is working']);
+    });
+
+
 });
+
+
