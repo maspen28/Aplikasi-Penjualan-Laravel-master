@@ -26,34 +26,39 @@ class ProductController extends Controller {
   }
 
   public function store(Request $request) {
+    //VALIDASI REQUESTNYA
     $this->validate($request, [
       'name' => 'required|string|max:100',
       'description' => 'required',
-      'category_id' => 'required|exists:categories,id',
+      'category_id' => 'required|exists:categories,id', //CATEGORY_ID KITA CEK HARUS ADA DI TABLE CATEGORIES DENGAN FIELD ID
       'price' => 'required|integer',
       'weight' => 'required|integer',
       'stock' => 'required|integer',
-      'image' => 'required|image|mimes:png,jpeg,jpg',
+      'image' => 'required|image|mimes:png,jpeg,jpg', //GAMBAR DIVALIDASI HARUS BERTIPE PNG,JPG DAN JPEG
     ]);
 
+    //JIKA FILENYA ADA
     if ($request->hasFile('image')) {
+      //MAKA KITA SIMPAN SEMENTARA FILE TERSEBUT KEDALAM VARIABLE FILE
       $file = $request->file('image');
+      //KEMUDIAN NAMA FILENYA KITA BUAT CUSTOMER DENGAN PERPADUAN TIME DAN SLUG DARI NAMA PRODUK. ADAPUN EXTENSIONNYA KITA GUNAKAN BAWAAN FILE TERSEBUT
       $filename = time() . Str::slug($request->name) . '.' . $file->getClientOriginalExtension();
-      $filePath = $file->storeAs('public/products', $filename);
-      $imageUrl = asset('storage/products/' . $filename);
+      //SIMPAN FILENYA KEDALAM FOLDER PUBLIC/PRODUCTS, DAN PARAMETER KEDUA ADALAH NAMA CUSTOM UNTUK FILE TERSEBUT
+      $file->storeAs('public/products', $filename);
 
+      //SETELAH FILE TERSEBUT DISIMPAN, KITA SIMPAN INFORMASI PRODUKNYA KEDALAM DATABASE
       $product = Product::create([
         'name' => $request->name,
-        'slug' => Str::slug($request->name),
+        'slug' => $request->name,
         'category_id' => $request->category_id,
         'description' => $request->description,
-        'image' => $imageUrl,
+        'image' => $filename, //PASTIKAN MENGGUNAKAN VARIABLE FILENAM YANG HANYA BERISI NAMA FILE SAJA (STRING)
         'price' => $request->price,
         'weight' => $request->weight,
         'stock' => $request->stock,
         'status' => $request->status,
       ]);
-
+      //JIKA SUDAH MAKA REDIRECT KE LIST PRODUK
       return redirect(route('product.index'))->with(['success' => 'Produk Baru Ditambahkan']);
     }
   }
@@ -101,38 +106,38 @@ class ProductController extends Controller {
   }
 
   public function update(Request $request, $id) {
+    //VALIDASI DATA YANG DIKIRIM
     $this->validate($request, [
       'name' => 'required|string|max:100',
       'description' => 'required',
       'category_id' => 'required|exists:categories,id',
       'price' => 'required|integer',
       'weight' => 'required|integer',
-      'image' => 'nullable|image|mimes:png,jpeg,jpg',
+      'image' => 'nullable|image|mimes:png,jpeg,jpg', //IMAGE BISA NULLABLE
     ]);
 
-    $product = Product::find($id);
-    $filename = $product->image;
+    $product = Product::find($id); //AMBIL DATA PRODUK YANG AKAN DIEDIT BERDASARKAN ID
+    $filename = $product->image; //SIMPAN SEMENTARA NAMA FILE IMAGE SAAT INI
 
+    //JIKA ADA FILE GAMBAR YANG DIKIRIM
     if ($request->hasFile('image')) {
       $file = $request->file('image');
       $filename = time() . Str::slug($request->name) . '.' . $file->getClientOriginalExtension();
-      $filePath = $file->storeAs('public/products', $filename);
-      $imageUrl = asset('storage/products/' . $filename);
+      //MAKA UPLOAD FILE TERSEBUT
+      $file->storeAs('public/products', $filename);
+      //DAN HAPUS FILE GAMBAR YANG LAMA
       File::delete(storage_path('app/public/products/' . $product->image));
-    } else {
-      $imageUrl = $product->image;
     }
 
+    //KEMUDIAN UPDATE PRODUK TERSEBUT
     $product->update([
       'name' => $request->name,
       'description' => $request->description,
       'category_id' => $request->category_id,
       'price' => $request->price,
       'weight' => $request->weight,
-      'image' => $imageUrl,
+      'image' => $filename,
     ]);
-
     return redirect(route('product.index'))->with(['success' => 'Data Produk Diperbaharui']);
   }
-
 }
