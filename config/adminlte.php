@@ -248,30 +248,37 @@ return [
             // 'label'       => ,
             'label_color' => 'success',
         ],
-        ['header' => 'MANAGEMEN PRODUK'],
+        ['header' => 'Data Master'],
         [
             'text' => 'Kategori',
             'url'  => 'kategori',
             'icon' => 'fas fa-archive',
         ],
         [
-            'text' => 'Produk',
+            'text' => 'Data Kaos',
             'url'  => 'auth/product',
             'icon' => 'fas fa-box',
         ],
+        ['header' => 'Transaksi'],
         [
-            'text' => 'Pesanan',
+            'text' => 'Data Transaksi',
             'url'  => 'order/index',
             'icon' => 'fas fa-shopping-cart',
         ],
         [
-            'text'    => 'Laporan',
-            'icon'    => 'fas fa-calendar-check',
+            'text' => 'Data Laporan',
+            'url'  => 'order/index',
+            'icon' => 'fas fa-calendar-check',
+        ],
+        ['header' => 'MANAJEMEN USER'],
+        [
+            'text'    => 'Data Akun',
+            'icon'    => 'fas fa-users',
             'submenu' => [
                 [
-                    'text' => 'Order',
+                    'text' => 'Akun',
                     'url'  => 'order',
-                    'icon'    => 'fas fa-puzzle-piece',
+                    'icon'    => 'fas fa-users',
                 ],
                 // [
                 //     'text' => 'Return',

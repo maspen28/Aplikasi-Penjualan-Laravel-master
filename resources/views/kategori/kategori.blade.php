@@ -15,64 +15,79 @@
     <div class="container-fluid">
         <div class="animated fadeIn">
             <div class="row">
-              	
-              	<!-- BAGIAN INI AKAN MENG-HANDLE FORM INPUT NEW CATEGORY  -->
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title">Kategori Baru</h4>
-                        </div>
-                        <div class="card-body">
-                          
-                            <form action="{{ route('category.store') }}" method="post">
-                                @csrf
-                                <div class="form-group">
-                                    <label for="name">Kategori</label>
-                                    <input type="text" name="name" class="form-control" required>
-                                    <p class="text-danger">{{ $errors->first('name') }}</p>
-                                </div>
-                                <div class="form-group">
-                                    <label for="parent_id">Kategori</label>
-                                      <!-- VARIABLE $PARENT PADA METHOD INDEX KITA GUNAKAN DISINI -->
-                                    <!-- UNTUK MENAMPILKAN DATA CATEGORY YANG PARENT_ID NYA NULL -->
-                                    <!-- UNTUK DIPILIH SEBAGAI PARENT TAPI SIFATNYA OPTIONAL -->
-                                    <select name="parent_id" class="form-control">
-                                        <option value="">None</option>
-                                        @foreach ($parent as $row)
-                                        <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <p class="text-danger">{{ $errors->first('name') }}</p>
-                                </div>
-                                <div class="form-group">
-                                    <button class="btn btn-primary btn-sm">Tambah</button>
-                                </div>
-                            </form>
-                          
+              
+                <!-- MODAL UNTUK FORM INPUT NEW CATEGORY -->
+                <div class="modal fade" id="categoryModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="categoryModalLabel">Kategori Baru</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{{ route('category.store') }}" method="post">
+                                    @csrf
+                                    <div class="form-group">
+                                        <label for="name">Kategori</label>
+                                        <input type="text" name="name" class="form-control" required>
+                                        <p class="text-danger">{{ $errors->first('name') }}</p>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-primary btn-sm">Tambah</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- BAGIAN INI AKAN MENG-HANDLE FORM INPUT NEW CATEGORY  -->
+                <!-- MODAL UNTUK FORM INPUT NEW CATEGORY -->
               
-                <!-- BAGIAN INI AKAN MENG-HANDLE TABLE LIST CATEGORY  -->
-                <div class="col-md-8">
+                <!-- MODAL UNTUK FORM EDIT CATEGORY -->
+                <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editCategoryModalLabel">Edit Kategori</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editCategoryForm" method="post">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="form-group">
+                                        <label for="edit_name">Kategori</label>
+                                        <input type="text" name="name" class="form-control" id="edit_name" required>
+                                        <p class="text-danger">{{ $errors->first('name') }}</p>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-primary btn-sm">Update</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- MODAL UNTUK FORM EDIT CATEGORY -->
+              
+                <!-- BAGIAN INI AKAN MENG-HANDLE TABLE LIST CATEGORY -->
+                <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="card-title">List Kategori</h4>
+                            <h4 class="card-title">List Kategori
+                                <button class="btn btn-primary btn-sm float-right ml-2" data-toggle="modal" data-target="#categoryModal">Tambah Kategori</button>
+                            </h4>
                         </div>
                         <div class="card-body">
-                          	<!-- KETIKA ADA SESSION SUCCESS  -->
                             @if (session('success'))
-                              <!-- MAKA TAMPILKAN ALERT SUCCESS -->
                                 <div class="alert alert-success">{{ session('success') }}</div>
                             @endif
-
-                            <!-- KETIKA ADA SESSION ERROR  -->
                             @if (session('error'))
-                              <!-- MAKA TAMPILKAN ALERT DANGER -->
                                 <div class="alert alert-danger">{{ session('error') }}</div>
                             @endif
-
                             <div class="table-responsive">
                                 <table class="table table-hover table-bordered">
                                     <thead>
@@ -85,30 +100,21 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                      	<!-- LOOPING DATA KATEGORI SESUAI JUMLAH DATA YANG ADA DI VARIABLE $CATEGORY -->
                                         @forelse ($category as $val)
                                         <tr>
                                             <td></td>
                                             <td><strong>{{ $val->name }}</strong></td>
-                                          
-                                          	<!-- MENGGUNAKAN TERNARY OPERATOR, UNTUK MENGECEK, JIKA $val->parent ADA MAKA TAMPILKAN NAMA PARENTNYA, SELAIN ITU MAKA TANMPILKAN STRING - -->
                                             <td>{{ $val->parent ? $val->parent->name:'-' }}</td>
-                                          
-                                            <!-- FORMAT TANGGAL KETIKA KATEGORI DIINPUT SESUAI FORMAT INDONESIA -->
                                             <td>{{ $val->created_at->format('d-m-Y') }}</td>
                                             <td>
-                                              
-                                                <!-- FORM ACTION UNTUK METHOD DELETE -->
                                                 <form action="{{ route('category.destroy', $val->id) }}" method="post">
-                                                    <!-- KONVERSI DARI @ CSRF & @ METHOD AKAN DIJELASKAN DIBAWAH -->
                                                     @csrf
                                                     @method('DELETE')
-                                                    <a href="{{ route('category.edit', $val->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                                    <a href="javascript:void(0)" class="btn btn-warning btn-sm edit-category" data-id="{{ $val->id }}" data-name="{{ $val->name }}">Edit</a>
                                                     <button class="btn btn-danger btn-sm">Hapus</button>
                                                 </form>
                                             </td>
                                         </tr>
-                                        <!-- JIKA DATA CATEGORY KOSONG, MAKA AKAN DIRENDER KOLOM DIBAWAH INI  -->
                                         @empty
                                         <tr>
                                             <td colspan="5" class="text-center">Tidak ada data</td>
@@ -117,12 +123,11 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <!-- FUNGSI INI AKAN SECARA OTOMATIS MEN-GENERATE TOMBOL PAGINATION  -->
                             {!! $category->links() !!}
                         </div>
                     </div>
                 </div>
-                <!-- BAGIAN INI AKAN MENG-HANDLE TABLE LIST CATEGORY  -->
+                <!-- BAGIAN INI AKAN MENG-HANDLE TABLE LIST CATEGORY -->
             </div>
         </div>
     </div>
@@ -134,5 +139,18 @@
 @stop
 
 @section('js')
-    <script> console.log('Hi!'); </script>
+    <script>
+        $(document).ready(function(){
+            $('.edit-category').click(function(){
+                var id = $(this).data('id');
+                var name = $(this).data('name');
+                var url = '{{ route("category.update", ":id") }}';
+                url = url.replace(':id', id);
+
+                $('#editCategoryModal').modal('show');
+                $('#editCategoryForm').attr('action', url);
+                $('#edit_name').val(name);
+            });
+        });
+    </script>
 @stop
