@@ -25,4 +25,10 @@ Route::post('/register', [AuthenticationController::class, 'register']);
 
 Route::get('/product', [ProductController::class, 'index']);
 Route::get('/product/{id}', [ProductController::class, 'detail']);
+
+Route::get('/cart', [ProductController::class, 'cart']);
+Route::post('/cart', [ProductController::class, 'addToCart']);
+Route::delete('/cart', [ProductController::class, 'removeFromCart']);
+
+Route::post('/checkout', [ProductController::class, 'checkout']);
 ?>
