@@ -34,10 +34,12 @@ class Product extends Model
         return $this->hasMany(Cart::class);
     }
 
-    public function addCart(){
+    public function addCart($customer_id, $qty = 1){
 
         return Cart::create([
             'product_id' => $this->id,
+            'customer_id' => $customer_id,
+            'qty' => $qty
         ]);
     }
 }

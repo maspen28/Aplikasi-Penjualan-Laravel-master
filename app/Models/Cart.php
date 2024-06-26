@@ -2,21 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cart extends Model
-{
-    use HasFactory;
+class Cart extends Model {
+  protected $table = 'carts';
 
-    protected $guarded = [];
+  // Jika Anda ingin memperbolehkan mass assignment, tambahkan fillable properties
+  protected $fillable = ['customer_id', 'product_id', 'qty'];
 
-    public function product(){
-        return $this->belongsTo(Product::class);
-    }
+  // Relasi dengan model Product
+  public function product() {
+    return $this->belongsTo(Product::class);
+  }
 
-    public function customer(){
-        return $this->belongsTo(Customer::class);
-    }
-
+  // Relasi dengan model Customer
+  public function customer() {
+    return $this->belongsTo(Customer::class);
+  }
 }
