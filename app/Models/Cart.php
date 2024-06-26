@@ -8,7 +8,7 @@ class Cart extends Model {
   protected $table = 'carts';
 
   // Jika Anda ingin memperbolehkan mass assignment, tambahkan fillable properties
-  protected $fillable = ['customer_id', 'product_id', 'qty'];
+  protected $fillable = ['id', 'customer_id', 'product_id', 'qty'];
 
   // Relasi dengan model Product
   public function product() {

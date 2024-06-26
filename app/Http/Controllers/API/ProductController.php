@@ -33,7 +33,7 @@ class ProductController extends Controller {
         
         $cartItems = Cart::where('customer_id', $customer_id)
                         ->join('products', 'carts.product_id', '=', 'products.id')
-                        ->select('products.id as product_id', 'products.name as nama_produk', 'products.price', 'products.weight', 'carts.qty')
+                        ->select('carts.id', 'products.id as product_id', 'products.name as nama_produk', 'products.price', 'products.weight', 'products.image', 'carts.qty')
                         ->get();
 
         if ($cartItems->isNotEmpty()) {
@@ -63,26 +63,17 @@ class ProductController extends Controller {
         }
     }
 
-  public static function removeFromCart(Request $request) {
-    $id = $request->input('product_id');
-    $customer_id = $request->input('customer_id');
-    $cart = Cart::where('product_id', $id)->where('customer_id', $customer_id)->get();
-    if ($cart) {
-      if (is_array($cart)) {
-        foreach ($cart as $c) {
-          $c->delete();
+    public static function removeFromCart(Request $request) {
+        $cart_id = $request->input('id'); // Mengambil cart_id dari request
+        $cart = Cart::find($cart_id); // Mencari cart berdasarkan cart_id
+
+        if ($cart) {
+            $cart->delete(); // Menghapus cart jika ditemukan
+            return ApiResponseUtils::success();
+        } else {
+            return ApiResponseUtils::failed('Cart item not found');
         }
-      } else {
-        $cart->delete();
-      }
-
-      return ApiResponseUtils::success();
-    } else {
-      return ApiResponseUtils::failed();
     }
-
-  }
-
   public static function checkout(Request $request) {
     $id = $request->input('product_id');
     $customer_id = $request->input('customer_id');
