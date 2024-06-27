@@ -74,38 +74,4 @@ class ProductController extends Controller {
             return ApiResponseUtils::failed('Cart item not found');
         }
     }
-  public static function checkout(Request $request) {
-    $id = $request->input('product_id');
-    $customer_id = $request->input('customer_id');
-    $cart = Cart::where('customer_id', $customer_id);
-    if ($id) {
-      $cart->where('product_id', $id);
-    }
-
-    $cart = $cart->get();
-
-    if ($cart) {
-      if (is_array($cart)) {
-        foreach ($cart as $c) {
-          Order::create([
-            'product_id' => $c->product_id,
-            'customer_id' => $c->customer_id,
-            'qty' => $c->qty,
-          ]);
-          $c->delete();
-        }
-      } else {
-        Order::create([
-          'product_id' => $c->product_id,
-          'customer_id' => $c->customer_id,
-          'qty' => $c->qty,
-        ]);
-        $cart->delete();
-      }
-      return ApiResponseUtils::success();
-    } else {
-      return ApiResponseUtils::failed();
-    }
-
-  }
 }
