@@ -12,10 +12,10 @@ use Midtrans\Snap;
 class PaymentController extends Controller {
   public function __construct() {
     // Set konfigurasi Midtrans
-    // Config::$serverKey = '';
-    // Config::$isProduction = false;
-    // Config::$isSanitized = true;
-    // Config::$is3ds = true;
+    Config::$serverKey = 'Mid-server-GHW9qwdE1tCZMp2EdMomifhs';
+    Config::$isProduction = false;
+    Config::$isSanitized = true;
+    Config::$is3ds = true;
   }
 
   public function createPayment(Request $request, $orderId) {

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\AuthenticationController;
 use App\Http\Controllers\API\CheckoutController;
+use App\Http\Controllers\API\LocationController;
 use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\ShippingController;
@@ -25,6 +26,10 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/login', [AuthenticationController::class, 'login']);
 Route::post('/register', [AuthenticationController::class, 'register']);
+
+Route::get('/city/{provinceId}', [LocationController::class, 'getCity']);
+Route::get('/district/province/{provinceId}/city/{cityId}/', [LocationController::class, 'getDistrict']);
+Route::get('/provinces', [LocationController::class, 'getProvinces']);
 
 Route::get('/product', [ProductController::class, 'index']);
 Route::get('/product/{id}', [ProductController::class, 'detail']);
