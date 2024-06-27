@@ -21,7 +21,7 @@ class District extends Model
 {
     use DistrictTrait;
 
-    protected $table = 'districts';
+    protected $table = 'district';
     protected $primarykey='id';
 
     public function citie()

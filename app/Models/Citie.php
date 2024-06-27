@@ -9,7 +9,7 @@ class Citie extends Model
 {
     use HasFactory;
 
-    protected $table = 'cities';
+    protected $table = 'city';
     protected $primarykey='id';
 
     public function province()
