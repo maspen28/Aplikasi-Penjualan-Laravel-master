@@ -13,9 +13,9 @@ class PaymentController extends Controller {
   public function __construct() {
     // Set konfigurasi Midtrans
     // Config::$serverKey = '';
-    Config::$isProduction = false;
-    Config::$isSanitized = true;
-    Config::$is3ds = true;
+    // Config::$isProduction = false;
+    // Config::$isSanitized = true;
+    // Config::$is3ds = true;
   }
 
   public function createPayment(Request $request, $orderId) {
