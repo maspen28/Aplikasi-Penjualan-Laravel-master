@@ -8,14 +8,18 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body>
-    <h5>Laporan Order Periode ({{ $date[0] }} - {{ $date[1] }})</h5>
+    <div class="text-center">
+        <img src="assets/img/logo.png" alt="Logo" style="width: 100px;">
+        <h2>Laporan Penjualan Toko Kembang Telon</h2>
+        <h5>Periode ({{ $date[0] }} - {{ $date[1] }})</h5>
+    </div>
     <hr>
     <table width="100%" class="table-hover table-bordered">
         <thead>
             <tr>
                 <th>InvoiceID</th>
                 <th>Pelanggan</th>
-                <th>Subtotal</th>
+                <th>Total</th>
                 <th>Tanggal</th>
             </tr>
         </thead>
@@ -27,7 +31,12 @@
                     <td>
                         <strong>{{ $row->customer_name }}</strong><br>
                         <label><strong>Telp:</strong> {{ $row->customer_phone }}</label><br>
-                        <label><strong>Alamat:</strong> {{ $row->customer_address }} {{ $row->customer->district->name }} - {{  $row->citie->name }}, {{  $row->citie->postal_code }}</label>
+                        <label><strong>Alamat:</strong> 
+                            {{ $row->customer_address }}
+                            {{ optional($row->customer->district)->name }}
+                            - {{ optional($row->citie)->name }},
+                            {{ optional($row->citie)->postal_code }}
+                        </label>
                     </td>
                     <td>Rp {{ number_format($row->subtotal) }}</td>
                     <td>{{ $row->created_at->format('d-m-Y') }}</td>

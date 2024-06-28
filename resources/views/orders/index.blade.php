@@ -1,3 +1,4 @@
+<!-- resources/views/orders/index.blade.php -->
 @extends('adminlte::page')
 
 @section('title', 'Dashboard')
@@ -66,7 +67,13 @@
                                             <td>
                                                 <strong>{{ $row->customer_name }}</strong><br>
                                                 <label><strong>Telp:</strong> {{ $row->customer_phone }}</label><br>
-                                                <label><strong>Alamat:</strong> {{ $row->customer_address }} {{ $row->customer->district->name }} - {{  $row->citie->name }}, {{  $row->citie->postal_code }}</label>
+                                                <label>
+                                                    <strong>Alamat:</strong>
+                                                    {{ $row->customer_address }} 
+                                                    {{ $row->customer->district->name ?? '-' }} - 
+                                                    {{ $row->customer->district->citie->name ?? '-' }},
+                                                    {{ $row->customer->district->citie->postal_code ?? '-' }}
+                                                </label>
                                             </td>
                                             <td>Rp {{ number_format($row->subtotal) }}</td>
                                             <td>{{ $row->created_at->format('d-m-Y') }}</td>
@@ -85,7 +92,6 @@
                                             </td>
                                             <td>
                                                 @if ($row->status == 0)
-
                                                     <button class="btn btn-secondary btn-sm">Baru</button><br><br>
                                                     <a class="btn btn-danger" href="/costumer/pdf/{{$row->id}} ">View invoice</a>
                                                 @elseif ($row->status == 1)
@@ -107,7 +113,6 @@
                                                     <form action="destroy/{{$row->id}}" method="post">
                                                         @csrf
                                                         @method('DELETE')
-
                                                         <button class="btn btn-warning btn-sm" disabled>selesai</button>
                                                         <button class="btn btn-danger btn-sm">Hapus</button>
                                                     </form>
@@ -129,5 +134,6 @@
             </div>
         </div>
     </div>
+</div>
 </main>
 @endsection

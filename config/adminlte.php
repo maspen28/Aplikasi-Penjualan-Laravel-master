@@ -264,7 +264,7 @@ return [
             'url'  => 'auth/product',
             'icon' => 'fas fa-box',
         ],
-        ['header' => 'Manajemen Transaksi'],
+        ['header' => 'Transaksi'],
         [
             'text' => 'Pesanan',
             'url'  => 'order/index',
@@ -275,7 +275,7 @@ return [
             'icon'    => 'fas fa-calendar-check',
             'submenu' => [
                 [
-                    'text' => 'Pemesanan',
+                    'text' => 'Laporan Pesanan',
                     'url'  => 'order',
                     'icon'    => 'fas fa-puzzle-piece',
                 ],

@@ -17,9 +17,9 @@ class Order extends Model
         return $this->belongsTo(District::class);
     }
 
-    public function citie()
+    public function city()
     {
-        return $this->belongsTo(Citie::class);
+        return $this->belongsTo(City::class);
     }
 
     public function getTotalAttribute()

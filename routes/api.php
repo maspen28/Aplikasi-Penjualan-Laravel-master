@@ -41,6 +41,7 @@ Route::delete('/cart', [ProductController::class, 'removeFromCart']);
 Route::post('/checkout', [CheckoutController::class, 'checkout']);
 
 // Payment and Shipping Routes
+Route::post('/payment/create/{orderId}', [PaymentController::class, 'createPayment'])->name('payment.create');
 Route::post('/payment/notification', [PaymentController::class, 'notificationHandler']);
 Route::post('/shipping/cost', [ShippingController::class, 'calculateShippingCost']);
 ?>
