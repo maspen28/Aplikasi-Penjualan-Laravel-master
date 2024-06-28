@@ -233,8 +233,8 @@ return [
     'menu' => [
         [
             'text' => 'search',
-            'search' => true,
-            'topnav' => true,
+            'search' => false,
+            'topnav' => false,
         ],
         [
             'text' => 'blog',
@@ -248,7 +248,12 @@ return [
             // 'label'       => ,
             'label_color' => 'success',
         ],
-        ['header' => 'MANAGEMEN PRODUK'],
+        ['header' => 'MASTER'],
+        [
+            'text' => 'Akun Customer',
+            'url'  => 'auth/akun',
+            'icon' => 'fas fa-users',
+        ],
         [
             'text' => 'Kategori',
             'url'  => 'kategori',
@@ -259,6 +264,7 @@ return [
             'url'  => 'auth/product',
             'icon' => 'fas fa-box',
         ],
+        ['header' => 'Manajemen Transaksi'],
         [
             'text' => 'Pesanan',
             'url'  => 'order/index',
@@ -269,7 +275,7 @@ return [
             'icon'    => 'fas fa-calendar-check',
             'submenu' => [
                 [
-                    'text' => 'Order',
+                    'text' => 'Pemesanan',
                     'url'  => 'order',
                     'icon'    => 'fas fa-puzzle-piece',
                 ],

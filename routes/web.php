@@ -8,6 +8,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Ecommerce\FrontController;
 use App\Http\Controllers\Ecommerce\CartController;
+use App\Http\Controllers\CustomerAccountController;
 use App\Http\Controllers\Ecommerce\OrderController as EcommerceOrderController;
 use App\Http\Controllers\OrderController;
 use App\Models\OrderDetail;
@@ -53,6 +54,10 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('product/bulk', [ProductController::class, 'massUploadForm'])->name('product.bulk');
     Route::post('product/bulk', [ProductController::class, 'massUpload'])->name('product.saveBulk');
+
+    /* route akun (customer) */
+    Route::get('auth/akun', [CustomerAccountController::class, 'index'])->name('customers.index');
+    Route::delete('akun/{id}', [CustomerAccountController::class, 'destroy'])->name('customer.destroy');
 
     /* route kategori */
     Route::get('kategori', [CategoryController::class, 'index'])->name('category.index');

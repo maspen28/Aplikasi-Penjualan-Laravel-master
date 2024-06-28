@@ -18,8 +18,13 @@ class ProductController extends Controller
             $product = $product->where('name', 'LIKE', '%' . request()->q . '%');
         }
         $product = $product->paginate(10);
-        return view('produk.produk', compact('product'));
+
+        // Ambil kategori dari database
+        $category = Category::orderBy('name', 'DESC')->get();
+
+        return view('produk.produk', compact('product', 'category'));
     }
+
 
     public function create()
     {
