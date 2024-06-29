@@ -57,7 +57,9 @@
                                             <th>Subtotal</th>
                                             <th>Tanggal</th>
                                             <th>Status</th>
+                                            @if (Auth::user()->id_privileges == 1)
                                             <th>Aksi</th>
+                                            @endif
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -91,6 +93,7 @@
                                                 @endif
                                             </td>
                                             <td>
+                                                @if (Auth::user()->id_privileges == 1)
                                                 @if ($row->status == 0)
                                                     <button class="btn btn-secondary btn-sm">Baru</button><br><br>
                                                     <a class="btn btn-danger" href="/costumer/pdf/{{$row->id}} ">View invoice</a>
@@ -117,6 +120,7 @@
                                                         <button class="btn btn-danger btn-sm">Hapus</button>
                                                     </form>
                                                 @endif
+                                                @endif
                                             </td>
                                         </tr>
                                         @empty
@@ -127,7 +131,6 @@
                                     </tbody>
                                 </table>
                             </div>
-                            {!! $orders->links() !!}
                         </div>
                     </div>
                 </div>

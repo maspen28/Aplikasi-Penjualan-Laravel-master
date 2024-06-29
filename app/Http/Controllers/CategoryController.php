@@ -7,6 +7,12 @@ use App\Models\Category;
 
 class CategoryController extends Controller
 {
+    public function __construct()
+    {
+        // Terapkan middleware 'check.privileges' untuk akses CRUD (id_privileges = 1)
+        $this->middleware('check.privileges:1')->except('index', 'show');
+    }
+    
     public function index()
     {
         $category = Category::with(['parent'])->orderBy('created_at', 'DESC')->paginate(10);

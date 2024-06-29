@@ -37,7 +37,9 @@
                                     <div class="input-group-append">
                                         <button class="btn btn-secondary" type="submit">Filter</button>
                                     </div>
+                                    @if (Auth::user()->id_privileges == 1)
                                     <a target="_blank" class="btn btn-primary ml-2" id="exportpdf">Export PDF</a>
+                                    @endif
                                 </div>
                             </form>
                             <div class="table-responsive">

@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    <h1>Kategori</h1>
+    <h1>Produk</h1>
 @stop
 
 @section('content')
@@ -20,9 +20,11 @@
                         <div class="card-header">
                             <h4 class="card-title">
                                 List Product
+                                @if (Auth::user()->id_privileges == 1)
                                 <div class="float-right">
                                     <button class="btn btn-primary btn-sm ml-3" data-toggle="modal" data-target="#addProductModal">Tambah</button>
                                 </div>
+                                @endif
                             </h4>
                         </div>
                         <div class="card-body">
@@ -52,7 +54,9 @@
                                             <th>Harga</th>
                                             <th>Created At</th>
                                             <th>Status</th>
+                                            @if (Auth::user()->id_privileges == 1)
                                             <th>Aksi</th>
+                                            @endif
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -71,6 +75,7 @@
                                             <td>{{ $row->created_at->format('d-m-Y') }}</td>
                                             <td>{!! $row->status_label !!}</td>
                                             <td>
+                                                @if (Auth::user()->id_privileges == 1)
                                                 <!-- Button trigger modal -->
                                                 <button type="button" class="btn btn-warning btn-sm mb-3" data-toggle="modal" data-target="#editProductModal{{ $row->id }}">
                                                     Edit
@@ -80,6 +85,7 @@
                                                     @method('DELETE')
                                                     <button class="btn btn-danger btn-sm">Hapus</button>
                                                 </form>
+                                                @endif
                                             </td>
                                         </tr>
                                         @empty

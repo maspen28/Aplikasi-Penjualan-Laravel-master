@@ -40,7 +40,9 @@
                                             <th>Email</th>
                                             <th>Telepon</th>
                                             <th>Alamat</th>
+                                            @if (Auth::user()->id_privileges == 1)
                                             <th>Aksi</th>
+                                            @endif
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -52,11 +54,13 @@
                                                 <td>{{ $customer->phone }}</td>
                                                 <td>{{ $customer->address }}</td>
                                                 <td>
+                                                    @if (Auth::user()->id_privileges == 1)
                                                     <form action="{{ route('customer.destroy', $customer->id) }}" method="POST" style="display: inline-block;">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
                                                     </form>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach

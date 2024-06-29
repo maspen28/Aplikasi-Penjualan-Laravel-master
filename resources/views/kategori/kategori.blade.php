@@ -22,7 +22,9 @@
                         <div class="card-header">
                             <h4 class="card-title">
                                 List Kategori
+                                @if (Auth::user()->id_privileges == 1)
                                 <button class="btn btn-primary btn-sm float-right ml-4" data-toggle="modal" data-target="#addCategoryModal">Tambah Kategori</button>
+                                @endif
                             </h4>
                         </div>
                         <div class="card-body">
@@ -46,7 +48,9 @@
                                             <th>Kategori</th>
                                             <th>Parent</th>
                                             <th>Created At</th>
+                                            @if (Auth::user()->id_privileges == 1)
                                             <th>Aksi</th>
+                                            @endif
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -62,7 +66,7 @@
                                             <!-- FORMAT TANGGAL KETIKA KATEGORI DIINPUT SESUAI FORMAT INDONESIA -->
                                             <td>{{ $val->created_at->format('d-m-Y') }}</td>
                                             <td>
-                                              
+                                            @if (Auth::user()->id_privileges == 1)
                                                 <!-- FORM ACTION UNTUK METHOD DELETE -->
                                                 <form action="{{ route('category.destroy', $val->id) }}" method="post">
                                                     <!-- KONVERSI DARI @ CSRF & @ METHOD AKAN DIJELASKAN DIBAWAH -->
@@ -71,6 +75,7 @@
                                                     <a href="{{ route('category.edit', $val->id) }}" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editCategoryModal" data-id="{{ $val->id }}" data-name="{{ $val->name }}" data-parent_id="{{ $val->parent_id }}">Edit</a>
                                                     <button class="btn btn-danger btn-sm">Hapus</button>
                                                 </form>
+                                            @endif
                                             </td>
                                         </tr>
                                         <!-- JIKA DATA CATEGORY KOSONG, MAKA AKAN DIRENDER KOLOM DIBAWAH INI  -->
