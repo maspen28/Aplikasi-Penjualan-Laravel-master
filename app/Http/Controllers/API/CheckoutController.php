@@ -88,7 +88,15 @@ class CheckoutController extends Controller {
 
       $snapToken = Snap::getSnapToken($params);
 
-      return response()->json(['status' => 'success', 'snap_token' => $snapToken]);
+      return response()->json([
+        'status' => 'success',
+        'id_order' => $order->id, // tambahkan id_order
+        'invoice' => $order->invoice, // tambahkan invoice
+        'customer_name' => $order->customer_name, // tambahkan customer_name
+        'customer_address' => $order->customer_address, // tambahkan customer_address
+        'cost' => $order->cost, // tambahkan cost
+        'snap_token' => $snapToken,
+      ]);
     } catch (Exception $e) {
       \DB::rollBack();
       return response()->json(['status' => 'failed', 'message' => $e->getMessage()]);
