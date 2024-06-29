@@ -11,17 +11,23 @@ class FrontController extends Controller
 {
     public function index()
     {
-        $products = Product::orderBy('created_at', 'DESC')->paginate(8);
+        $products = Product::where('status', 1)
+                        ->orderBy('created_at', 'DESC')
+                        ->paginate(8);
 
         return view('costumer.index', compact('products'));
     }
 
+
     public function product()
     {
-        $products = Product::orderBy('created_at', 'DESC')->paginate(12);
+        $products = Product::where('status', 1)
+                        ->orderBy('created_at', 'DESC')
+                        ->paginate(12);
 
         return view('costumer.produk', compact('products'));
     }
+
 
     public function categoryProduct($slug)
     {

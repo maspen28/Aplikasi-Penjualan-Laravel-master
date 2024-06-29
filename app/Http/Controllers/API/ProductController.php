@@ -11,11 +11,14 @@ use App\Utils\ApiResponseUtils;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller {
-  public static function index(Request $request) {
-    return ApiResponseUtils::make('Permintaan berhasil!', array(
-      'products' => Product::all(),
-      'categories' => Category::all()));
-  }
+    public static function index(Request $request)
+    {
+        $products = Product::where('status', 1)->get();
+        $categories = Category::all();
+
+        return ApiResponseUtils::make('Permintaan berhasil!', compact('products', 'categories'));
+    }
+
 
   public static function detail(Request $request, $id) {
     $product = Product::find($id);
