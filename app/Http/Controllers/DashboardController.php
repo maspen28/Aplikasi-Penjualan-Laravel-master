@@ -23,38 +23,72 @@ class DashboardController extends Controller
     
 }
 
-public function index()
-{
-    $totalCustomers = Customer::count();
-    $totalProducts = Product::count();
-    $monthlyRevenue = Order::whereMonth('created_at', date('m'))->sum('subtotal');
-    $ordersToShip = Order::where('status', 2)->count();
+    public function index()
+    {
+        $totalCustomers = Customer::count();
+        $totalProducts = Product::count();
+        $monthlyRevenue = Order::whereMonth('created_at', date('m'))->sum('cost'); // pastikan ini float/integer
+        $ordersToShip = Order::where('status', 3)->count();
 
-    // Menghitung omset harian
-    $dailyOrders = Order::selectRaw('DATE(created_at) as date, SUM(subtotal) as total')
-        ->whereDate('created_at', '>=', Carbon::now()->subDays(7)) // Contoh: Ambil data 7 hari terakhir
-        ->groupBy('date')
-        ->orderBy('date')
-        ->get();
+        $dailyRevenue = Order::selectRaw('DATE(created_at) as date, SUM(cost) as total')
+            ->groupBy('date')
+            ->pluck('total', 'date');
 
-    $dailyLabels = $dailyOrders->pluck('date')->map(function ($date) {
-        return Carbon::parse($date)->format('d M');
-    });
+        $dailyLabels = $dailyRevenue->keys();
+        $dailyRevenueValues = $dailyRevenue->values();
 
-    $dailyRevenue = $dailyOrders->pluck('total');
+        $monthlyRevenueData = Order::selectRaw('MONTH(created_at) as month, SUM(cost) as total')
+            ->groupBy('month')
+            ->pluck('total', 'month');
 
-    // Menghitung omset bulanan
-    $monthlyOrders = Order::selectRaw('DATE_FORMAT(created_at, "%b %Y") as month, SUM(subtotal) as total')
-        ->whereYear('created_at', Carbon::now()->year)
-        ->groupBy('month')
-        ->orderBy('month')
-        ->get();
+        $monthlyLabels = $monthlyRevenueData->keys();
+        $monthlyRevenueValues = $monthlyRevenueData->values();
 
-    $monthlyLabels = $monthlyOrders->pluck('month');
-    $monthlyRevenue = $monthlyOrders->pluck('total');
+        return view('dashboard', compact(
+            'totalCustomers', 'totalProducts', 'monthlyRevenue', 'ordersToShip', 
+            'dailyLabels', 'dailyRevenueValues', 'monthlyLabels', 'monthlyRevenueValues'
+        ));
+    }
 
-    return view('dashboard', compact('totalCustomers', 'totalProducts', 'monthlyRevenue', 'ordersToShip'));
-}
+    public function getData(Request $request) {
+        $month = $request->input('month', date('m'));
+        $year = $request->input('year', date('Y'));
+
+        // Query your data based on the selected month and year
+        $startDate = Carbon::createFromDate($year, $month, 1);
+        $endDate = $startDate->copy()->endOfMonth();
+
+        // Daily revenue
+        $dailyRevenue = Order::whereBetween('created_at', [$startDate, $endDate])
+            ->selectRaw('DATE(created_at) as date, SUM(cost) as total')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->pluck('total', 'date');
+
+        $dailyLabels = $dailyRevenue->keys();
+        $dailyRevenueValues = $dailyRevenue->values();
+
+        // Monthly revenue
+        $monthlyRevenue = Order::whereYear('created_at', $year)
+            ->selectRaw('MONTH(created_at) as month, SUM(cost) as total')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->pluck('total', 'month');
+
+        $monthlyLabels = $monthlyRevenue->keys();
+        $monthlyRevenueValues = $monthlyRevenue->values();
+
+        return response()->json([
+            'dailyLabels' => $dailyLabels,
+            'dailyRevenueValues' => $dailyRevenueValues,
+            'monthlyLabels' => $monthlyLabels,
+            'monthlyRevenueValues' => $monthlyRevenueValues,
+        ]);
+    }
+
+
 
 
 

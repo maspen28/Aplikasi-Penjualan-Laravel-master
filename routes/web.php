@@ -40,6 +40,9 @@ Route::get('/coba', function () {
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+// Route in web.php
+Route::get('/dashboard/data', 'DashboardController@getData')->name('dashboard.data');
+
 
 
 Route::group(['middleware' => ['auth']], function () {
