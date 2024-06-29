@@ -12,10 +12,10 @@ use Midtrans\Snap;
 class PaymentController extends Controller {
   public function __construct() {
     // Set konfigurasi Midtrans
-    Config::$serverKey = 'Mid-server-GHW9qwdE1tCZMp2EdMomifhs';
-    Config::$isProduction = false;
-    Config::$isSanitized = true;
-    Config::$is3ds = true;
+    Config::$serverKey = config('services.midtrans.serverKey');
+    Config::$isProduction = config('services.midtrans.isProduction');
+    Config::$isSanitized = config('services.midtrans.is_sanitized');
+    Config::$is3ds = config('services.midtrans.is_3ds');
   }
 
   public function createPayment(Request $request, $orderId) {
@@ -27,13 +27,13 @@ class PaymentController extends Controller {
 
     $params = [
       'transaction_details' => [
-        'order_id' => $order->invoice,
+        'order_id' => $order->id, // Menggunakan 'id' sebagai 'order_id'
         'gross_amount' => $order->cost, // total pembayaran
       ],
       'customer_details' => [
-        'first_name' => $order->customer_name,
-        'email' => $order->customer_email,
-        'phone' => $order->customer_phone,
+        'first_name' => $order->customer->name,
+        'email' => $order->customer->email,
+        'phone' => $order->customer->phone,
       ],
     ];
 
@@ -46,10 +46,14 @@ class PaymentController extends Controller {
 
     $transaction = $notif->transaction_status;
     $type = $notif->payment_type;
-    $orderId = $notif->order_id;
+    $orderId = $notif->order_id; // Menggunakan 'order_id' dari Midtrans
     $fraud = $notif->fraud_status;
 
-    $order = Order::where('invoice', $orderId)->first();
+    $order = Order::find($orderId); // Menggunakan 'id' untuk mencari order
+
+    if (!$order) {
+      return response()->json(['message' => 'Order not found'], 404);
+    }
 
     if ($transaction == 'capture') {
       if ($type == 'credit_card') {
@@ -81,4 +85,5 @@ class PaymentController extends Controller {
     return response()->json(['message' => 'Notification processed']);
   }
 }
+
 ?>

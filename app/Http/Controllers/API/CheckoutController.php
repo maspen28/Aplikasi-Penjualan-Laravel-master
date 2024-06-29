@@ -14,10 +14,10 @@ use Midtrans\Snap;
 
 class CheckoutController extends Controller {
   public function __construct() {
-    Config::$serverKey = config('midtrans.server_key');
-    Config::$isProduction = config('midtrans.is_production');
-    Config::$isSanitized = true;
-    Config::$is3ds = true;
+    Config::$serverKey = config('services.midtrans.serverKey');
+    Config::$isProduction = config('services.midtrans.isProduction');
+    Config::$isSanitized = config('services.midtrans.is_sanitized');
+    Config::$is3ds = config('services.midtrans.is_3ds');
   }
 
   public function checkout(Request $request) {
@@ -94,5 +94,4 @@ class CheckoutController extends Controller {
       return response()->json(['status' => 'failed', 'message' => $e->getMessage()]);
     }
   }
-
 }

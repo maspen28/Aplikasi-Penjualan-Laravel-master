@@ -48,7 +48,7 @@
             <ul class="nav-shop">
 
               @if(Auth::guard('costumer')->check())
-                    <li class="nav-item"><button><a href=" {{route('home.orderdetail')}} "><i class="ti-list"></i></a></button></li>
+                    <li class="nav-item"><button><a href=" {{route('home.orderdetail')}} "><i class="ti-heart"></i></a></button></li>
                     <li class="nav-item"><button><a href=" {{route('home.list_cart')}} "><i class="ti-shopping-cart"></i></a><span class="nav-shop__circle"> {{$cart->count()}} </span></button> </li>
 
                     <li class="nav-item submenu dropdown">
@@ -64,8 +64,8 @@
                     </li>
                 </div>
             @else
-                <li class="nav-item"><button><i class="ti-list"></i></button></li>
-                <li class="nav-item"><button><a href="cart"><i class="ti-shopping-cart"></i></a></span></button> </li>
+                <li class="nav-item"><button><i class="ti-heart"></i></button></li>
+                <li class="nav-item"><button><a href="/costumer/cart"><i class="ti-shopping-cart"></i></a></span></button> </li>
                 <li class="nav-item"><a class="button button-primary" href="{{ route('costumer.login') }}">Login</a></li>
             @endif
             </ul>
