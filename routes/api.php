@@ -6,6 +6,7 @@ use App\Http\Controllers\API\LocationController;
 use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\ShippingController;
+use App\Http\Controllers\API\HistoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -44,4 +45,6 @@ Route::post('/checkout', [CheckoutController::class, 'checkout']);
 Route::post('/payment/create/{orderId}', [PaymentController::class, 'createPayment'])->name('payment.create');
 Route::post('/payment/notification', [PaymentController::class, 'notificationHandler']);
 Route::post('/shipping/cost', [ShippingController::class, 'calculateShippingCost']);
+
+Route::get('/history', [HistoryController::class, 'getHistory']);
 ?>
