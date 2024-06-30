@@ -24,12 +24,16 @@ use Kavist\RajaOngkir\Facades\RajaOngkir;
 class CartController extends Controller
 {
     public function index(){
-        $cart = Cart::where('customer_id', Auth::guard('costumer')->user()->id)->get();
+        if (!Auth::guard('costumer')->check()) {
+            return redirect()->route('costumer.login')->with('error', 'Silahkan login terlebih dahulu untuk mengakses keranjang belanja.');
+        }
 
+        $cart = Cart::where('customer_id', Auth::guard('costumer')->user()->id)->get();
 
         $subtotal = collect($cart)->sum(function($q){
             return $q['qty'] * $q['cart_price'];
         });
+
         $weight = collect($cart)->sum(function($q){
             return $q['qty'] * $q['cart_weight'];
         });
@@ -40,7 +44,13 @@ class CartController extends Controller
         return view('costumer.cart', compact('cart', 'subtotal', 'weight', 'couriers', 'provinces'));
     }
 
+
     public function checkout(){
+
+        if (!Auth::guard('costumer')->check()) {
+        return redirect()->route('costumer.login')->with('error', 'Silahkan login terlebih dahulu untuk mengakses keranjang belanja.');
+        }
+
         $cart = Cart::where('customer_id', Auth::guard('costumer')->user()->id)->get();
 
         $subtotal = collect($cart)->sum(function($q){

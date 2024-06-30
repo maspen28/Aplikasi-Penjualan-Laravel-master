@@ -94,7 +94,9 @@ class CheckoutController extends Controller {
         'invoice' => $order->invoice, // tambahkan invoice
         'customer_name' => $order->customer_name, // tambahkan customer_name
         'customer_address' => $order->customer_address, // tambahkan customer_address
+        'customer_phone' => $order->customer_phone, // tambahkan customer_phone
         'cost' => $order->cost, // tambahkan cost
+        'ongkos_kirim' => $order->ongkos_kirim, // tambahkan ongkos_kirim
         'snap_token' => $snapToken,
       ]);
     } catch (Exception $e) {

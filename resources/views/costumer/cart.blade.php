@@ -55,37 +55,34 @@
                                                 <button class="btn btn-danger" type="submit"><i class="ti-trash"></i></button>
                                             </form>
                                         </td>
-                                        <form action="/costumer/cartupdate/{{$row->id}}" method="post">
-                                            @method('PATCH')
-                                            @csrf
-                                            <td>
-                                                <div class="media">
-                                                    <div class="d-flex">
-                                                        <img src="{{ asset('storage/products/' . $row->product->image) }}" style="height: 100px;" alt="">
-                                                    </div>
-                                                    <div class="media-body">
-                                                        <p>{{$row->product->name}}</p>
-                                                    </div>
+                                        <td>
+                                            <div class="media">
+                                                <div class="d-flex">
+                                                    <img src="{{ asset('storage/products/' . $row->product->image) }}" style="height: 100px;" alt="">
                                                 </div>
-                                            </td>
-                                            <td>
-                                                <h5>Rp.{{number_format($row->product->price)}}</h5>
-                                            </td>
-                                            <td>
-                                                <div class="product_count">
-                                                    <input type="text" name="qty" id="sst{{ $row->id }}" maxlength="12" value="{{$row->qty}}" title="Quantity:"
-                                                        class="input-text qty">
+                                                <div class="media-body">
+                                                    <p>{{ $row->product->name }}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <h5>Rp.{{ number_format($row->product->price) }}</h5>
+                                        </td>
+                                        <td>
+                                            <div class="product_count">
+                                                <form action="/costumer/cartupdate/{{$row->id}}" method="post">
+                                                    @method('PATCH')
+                                                    @csrf
+                                                    <input type="text" name="qty" id="sst{{ $row->id }}" maxlength="12" value="{{$row->qty}}" title="Quantity:" class="input-text qty">
                                                     <input type="hidden" name="{{$row->id}}" value="{{$row->id}}">
-                                                    <button onclick="var result = document.getElementById('sst{{$row->id}}'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
-                                                        class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
-                                                    <button onclick="var result = document.getElementById('sst{{$row->id}}'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
-                                                        class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <h5>Rp.{{ number_format($row->cart_price * $row->qty) }}</h5>
-                                            </td>
-                                        </form>
+                                                    <button onclick="var result = document.getElementById('sst{{$row->id}}'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;" class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
+                                                    <button onclick="var result = document.getElementById('sst{{$row->id}}'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;" class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <h5>Rp.{{ number_format($row->cart_price * $row->qty) }}</h5>
+                                        </td>
                                     </tr>
                                 @else
                                     <tr>
@@ -99,7 +96,7 @@
                             <tr>
                                 <td colspan="5">
                                     <div class="cupon_text d-flex align-items-center">
-                                        <h4>Belanjaan masih kosong, klik <a href=" {{route('home.product')}} ">disini!</a> untuk mulai belanja.</h4>
+                                        <h4>Belanjaan masih kosong, klik <a href="{{ route('home.product') }}">disini!</a> untuk mulai belanja.</h4>
                                     </div>
                                 </td>
                             </tr>
@@ -108,7 +105,6 @@
                         <tr class="bottom_button">
                             <td colspan="5" class="text-right">
                                 <button class="button" type="submit">Update</button>
-                            </form>
                             </td>
                         </tr>
                         <tr>
@@ -117,7 +113,7 @@
                                 <h5>Subtotal</h5>
                             </td>
                             <td>
-                                <h5>Rp.{{number_format($subtotal)}}</h5>
+                                <h5>Rp.{{ number_format($subtotal) }}</h5>
                             </td>
                         </tr>
                         <tr class="out_button_area">
@@ -126,11 +122,11 @@
                             <td>
                                 <div class="checkout_btn_inner d-flex align-items-center">
                                     @if ($cart->count())
-                                        <a class="gray_btn" href=" {{route('home.product')}} ">Lanjutkan Berbelanja</a>
-                                        <a class="primary-btn ml-2" href=" {{route('home.checkout')}} ">Checkout</a>
+                                        <a class="gray_btn" href="{{ route('home.product') }}">Lanjutkan Berbelanja</a>
+                                        <a class="primary-btn ml-2" href="{{ route('home.checkout') }}">Checkout</a>
                                     @else
-                                        <a class="primary-btn ml-2" href=" {{route('home.product')}} ">Lanjutkan Berbelanja</a>
-                                        <a href=" {{route('home.checkout')}} "><button class="gray_btn" disabled="disabled">Checkout</button></a>
+                                        <a class="primary-btn ml-2" href="{{ route('home.product') }}">Lanjutkan Berbelanja</a>
+                                        <a href="{{ route('home.checkout') }}"><button class="gray_btn" disabled="disabled">Checkout</button></a>
                                     @endif
                                 </div>
                             </td>
@@ -145,5 +141,5 @@
 @endsection
 
 @section('js')
-<script src="{{asset('assets/vendors/nice-select/jquery.nice-select.min.js')}}"></script>
+<script src="{{ asset('assets/vendors/nice-select/jquery.nice-select.min.js') }}"></script>
 @endsection
