@@ -22,6 +22,11 @@ class CheckoutController extends Controller {
 
   public function checkout(Request $request) {
     $customer_id = $request->input('customer_id');
+    $province_id = $request->input('province_id');
+    $city_id = $request->input('city_id');
+    $district_id = $request->input('district_id');
+    $ongkos_kirim = $request->input('ongkos_kirim');
+    $customer_phone = $request->input('customer_phone');
     $cartItems = Cart::where('customer_id', $customer_id)->get();
 
     if ($cartItems->isEmpty()) {
@@ -47,11 +52,16 @@ class CheckoutController extends Controller {
         'customer_id' => $customer_id,
         'customer_name' => $customer->name, // Mengambil data dari tabel customers
         'customer_address' => $customer->address, // Mengambil data dari tabel customers
-        'customer_phone' => $customer->phone, // Mengambil data dari tabel customers
-        'cost' => $subtotal,
+        'customer_phone' => $customer_phone,
         'shipping' => 0,
         'status' => 1,
         'subtotal' => $subtotal,
+        'ongkos_kirim' => $ongkos_kirim,
+        'cost' => $subtotal + $ongkos_kirim,
+        'city_id' => $city_id,
+        'district_id' => $district_id,
+        'province_id' => $province_id,
+
       ]);
 
       $orderDetails = [];
@@ -82,7 +92,7 @@ class CheckoutController extends Controller {
         'customer_details' => [
           'first_name' => $order->customer_name,
           'email' => $customer->email, // Mengambil data dari tabel customers
-          'phone' => $order->customer_phone,
+          'phone' => $customer_phone,
         ],
       ];
 
