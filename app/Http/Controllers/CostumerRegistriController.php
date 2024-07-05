@@ -23,14 +23,12 @@ class CostumerRegistriController extends Controller
         $this->middleware('guest');
     }
 
-    public function showRegisterForm(){
+    public function showRegisterForm()
+    {
         if (Auth::guard('costumer')->check()) {
-            return redirect('/costumer/home');
-        }
-        else {
-            $provinces = Province::orderBy('created_at', 'DESC')->get();
-
-            return view('costumerAuth.register', compact('provinces'));
+        return redirect('/costumer/home');
+        } else {
+        return view('costumerAuth.register');
         }
     }
 
@@ -46,54 +44,49 @@ class CostumerRegistriController extends Controller
         return response()->json(['status' => 'success', 'data' => $districts]);
     }
 
-    protected function createCostumer(Request $request)
+    public function createCustomer(Request $request)
     {
-        // dd($request);
-        $this->validate($request, [
-            'name' => ['required'],
-            'email' => ['required'],
-            'password' => ['required'],
-            'phone_number' => ['required'],
-            'address' => ['required'],
-            'citie_id' => ['required'],
-            'district_id' => ['required'],
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:customers,email',
+            'password' => 'required|string|min:8|confirmed',
+            'username' => 'required|string|max:15|unique:customers,username',
+            'address' => 'required|string|max:255',
         ]);
-        
-    
-   
-        $data = new Customer();
-        $data->name = $request->name;
-        $data->email = $request->email;
-        $data->password = bcrypt($request->password);
-        $data->phone_number = $request->phone_number;
-        $data->address = $request->address;
-        $data->citie_id = $request->citie_id;
-        $data->district_id = $request->district_id;
-        $data->save();
-    
-        return redirect('/costumer/login')->with('alert-success', 'Kamu berhasil Register');
-    }
-    
 
-    protected function updateFormCostumer(Request $request){
+        $customer = new Customer();
+        $customer->name = $request->name;
+        $customer->email = $request->email;
+        $customer->password = bcrypt($request->password);
+        $customer->username = $request->username;
+        $customer->address = $request->address;
+        $customer->save();
 
+        return redirect('/costumer/login')->with('alert-success', 'You have successfully registered');
     }
 
-    protected function updateCostumer(Request $request){
 
-    }
+    
 
-    // public function createCostumer(Array $input){
-    //     Validator::make($input, [
-    //         'name' => ['required', 'string', 'max:255'],
-    //         'email' => ['required', 'string', 'email', 'max:255', 'unique:customers'],
-    //         'password' => $this->passwordRules(),
-    //     ])->validate();
+    // protected function updateFormCostumer(Request $request){
 
-    //     return Customer::create([
-    //         'name' => $input['name'],
-    //         'email' => $input['email'],
-    //         'password' => Hash::make($input['password']),
-    //     ]);
     // }
+
+    // protected function updateCostumer(Request $request){
+
+    // }
+
+    // // public function createCostumer(Array $input){
+    // //     Validator::make($input, [
+    // //         'name' => ['required', 'string', 'max:255'],
+    // //         'email' => ['required', 'string', 'email', 'max:255', 'unique:customers'],
+    // //         'password' => $this->passwordRules(),
+    // //     ])->validate();
+
+    // //     return Customer::create([
+    // //         'name' => $input['name'],
+    // //         'email' => $input['email'],
+    // //         'password' => Hash::make($input['password']),
+    // //     ]);
+    // // }
 }

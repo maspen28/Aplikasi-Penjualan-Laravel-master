@@ -80,14 +80,13 @@ Route::group(['middleware' => ['auth']], function () {
 
 /* 
 tumer login & register */
-Route::prefix('/costumer')->name('costumer.')->namespace('Costumer')->group(function(){
+    Route::prefix('/costumer')->name('costumer.')->group(function () {
     Route::get('/login', [CostumersController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [CostumersController::class, 'login'])->name('login.post');
     Route::post('/logout', [CostumersController::class, 'logout'])->name('logout');
     Route::get('/register', [CostumerRegistriController::class, 'showRegisterForm'])->name('register');
-    Route::post('/register', [CostumerRegistriController::class, 'createCostumer'])->name('register.post');
-});
-
+    Route::post('/register', [CostumerRegistriController::class, 'createCustomer'])->name('register.post');
+    });
 
 
 /* costumer after login */
