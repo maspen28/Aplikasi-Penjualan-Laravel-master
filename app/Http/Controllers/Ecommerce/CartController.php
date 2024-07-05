@@ -23,26 +23,30 @@ use Kavist\RajaOngkir\Facades\RajaOngkir;
 
 class CartController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         if (!Auth::guard('costumer')->check()) {
             return redirect()->route('costumer.login')->with('error', 'Silahkan login terlebih dahulu untuk mengakses keranjang belanja.');
         }
 
         $cart = Cart::where('customer_id', Auth::guard('costumer')->user()->id)->get();
 
-        $subtotal = collect($cart)->sum(function($q){
-            return $q['qty'] * $q['cart_price'];
+        // Ensure $cart items are loaded with product relationships
+        $cart->load('product');
+
+        // Calculate subtotal based on cart items
+        $subtotal = $cart->sum(function($item) {
+            return $item->qty * $item->product->price;
         });
 
-        $weight = collect($cart)->sum(function($q){
-            return $q['qty'] * $q['cart_weight'];
-        });
+        $weight = $cart->sum('cart_weight');
 
         $couriers = Courier::pluck('title', 'code');
-        $provinces = Province::orderBy('created_at', 'DESC')->get();
+        // $provinces = Province::orderBy('created_at', 'DESC')->get();
 
-        return view('costumer.cart', compact('cart', 'subtotal', 'weight', 'couriers', 'provinces'));
+        return view('costumer.cart', compact('cart', 'subtotal', 'weight', 'couriers'));
     }
+
 
 
     public function checkout(){
@@ -124,16 +128,16 @@ class CartController extends Controller
         $this->validate($request,[
             'customer_id' => ['required'],
             'product_id' => ['required'],
-            'cart_price' => ['required'],
-            'cart_weight' => ['required'],
+            // 'cart_price' => ['required'],
+            // 'cart_weight' => ['required'],
             'qty' => ['required'],
         ]);
 
         $data = new Cart();
         $data->customer_id = $request->customer_id;
         $data->product_id = $request->product_id;
-        $data->cart_price = $request->cart_price;
-        $data->cart_weight = $request->cart_weight;
+        // $data->cart_price = $request->cart_price;
+        // $data->cart_weight = $request->cart_weight;
         $data->qty = $request->qty;
         $data->save();
 
@@ -141,18 +145,36 @@ class CartController extends Controller
     }
 
     public function destroy($id){
-        $cart = Cart::find($id);
+        $cart = Cart::findOrFail($id);
         $cart->delete();
 
-        return back()->with('alert-success','Kamu berhasil Register');
+        return back()->with('alert-success', 'Item removed from cart');    }
+
+    public function updateCart(Request $request, $id)
+    {
+        $cart = Cart::findOrFail($id);
+        $cart->qty = $request->qty;
+        $cart->save();
+
+        return back()->with('alert-success', 'Cart updated successfully');
     }
 
-    public function updateCart(Cart $cart){
-        $cart->update([
-            'qty' => request('qty')
-        ]);
+    public function updateQuantity(Request $request, $id)
+    {
+        $cart = Cart::findOrFail($id);
+        $cart->qty = $request->qty;
+        $cart->save();
 
-        return back();
+        // Calculate new total and subtotal
+        $total = $cart->product->price * $cart->qty;
+        $subtotal = Cart::where('customer_id', $cart->customer_id)->sum(function ($cartItem) {
+            return $cartItem->product->price * $cartItem->qty;
+        });
+
+        return response()->json([
+            'total' => number_format($total),
+            'subtotal' => number_format($subtotal)
+        ]);
     }
 
 }

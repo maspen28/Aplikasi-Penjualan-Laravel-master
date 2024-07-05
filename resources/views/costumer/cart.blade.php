@@ -1,12 +1,12 @@
 @extends('layouts.layout')
 
 @section('css')
-<link rel="stylesheet" href="{{asset('assets/vendors/linericon/style.css')}}">
-<link rel="stylesheet" href="{{asset('assets/vendors/nouislider/nouislider.min.css')}}">
+<link rel="stylesheet" href="{{ asset('assets/vendors/linericon/style.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/vendors/nouislider/nouislider.min.css') }}">
 @endsection
 
 @section('title')
-    Home
+    Shopping Cart
 @endsection
 
 @section('main')
@@ -49,7 +49,7 @@
                                 @if ($row->product)
                                     <tr>
                                         <td>
-                                            <form method="POST" action="{{ url('/costumer/cart/delete/'.$row->id)}}" accept-charset="UTF-8" style="display:inline">
+                                            <form method="POST" action="{{ url('/customer/cart/delete/'.$row->id)}}" accept-charset="UTF-8" style="display:inline">
                                                 @method('delete')
                                                 @csrf
                                                 <button class="btn btn-danger" type="submit"><i class="ti-trash"></i></button>
@@ -70,18 +70,18 @@
                                         </td>
                                         <td>
                                             <div class="product_count">
-                                                <form action="/costumer/cartupdate/{{$row->id}}" method="post">
+                                                <form action="{{ url('/customer/cart/update/'.$row->id)}}" method="post">
                                                     @method('PATCH')
                                                     @csrf
                                                     <input type="text" name="qty" id="sst{{ $row->id }}" maxlength="12" value="{{$row->qty}}" title="Quantity:" class="input-text qty">
-                                                    <input type="hidden" name="{{$row->id}}" value="{{$row->id}}">
                                                     <button onclick="var result = document.getElementById('sst{{$row->id}}'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;" class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
-                                                    <button onclick="var result = document.getElementById('sst{{$row->id}}'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;" class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
+                                                    <button onclick="var result = document.getElementById('sst{{$row->id}}'); var sst = result.value; if( !isNaN( sst ) && sst > 0 ) result.value--;return false;" class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
+                                                    <button type="submit">Update</button>
                                                 </form>
                                             </div>
                                         </td>
                                         <td>
-                                            <h5>Rp.{{ number_format($row->cart_price * $row->qty) }}</h5>
+                                            <h5>Rp.{{ number_format($row->product->price * $row->qty) }}</h5>
                                         </td>
                                     </tr>
                                 @else

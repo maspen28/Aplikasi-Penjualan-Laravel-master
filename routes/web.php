@@ -102,7 +102,8 @@ Route::group(['middelware' => 'costumer'], function () {
     // Route::post('/costumer/ongkir', [CartController::class, 'check_ongkir'])->name('home.cekongkir');
     Route::post('/costumer/cartadd', [CartController::class, 'addToCart'])->name('home.addcart');
     Route::patch('/costumer/cartupdate/{cart}', [CartController::class, 'updateCart'])->name('home.update_cart');
-    Route::delete('/costumert/cart/delete/{id}', [CartController::class, 'destroy']);
+    Route::patch('/customer/cart/update/{id}', [CartController::class, 'updateQuantity'])->name('customer.cart.update');
+    Route::delete('/costumer/cart/delete/{id}', [CartController::class, 'destroy']);
 
     Route::get('/costumer/order/{invoice}', [EcommerceOrderController::class, 'index'])->name('home.order');
     Route::get('/costumer/order-detail', [EcommerceOrderController::class, 'detail'])->name('home.orderdetail');
