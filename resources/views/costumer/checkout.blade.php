@@ -2,16 +2,13 @@
 
 @section('css')
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<link rel="stylesheet" href="{{asset('assets/vendors/linericon/style.css')}}">
-<link rel="stylesheet" href="{{asset('assets/vendors/nouislider/nouislider.min.css')}}">
+<link rel="stylesheet" href="{{ asset('assets/vendors/linericon/style.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/vendors/nouislider/nouislider.min.css') }}">
 @endsection
 
-@section('title')
-    Checkout
-@endsection
+@section('title', 'Checkout')
 
 @section('main')
-<!-- ================ start banner area ================= -->
 <section class="blog-banner-area" id="category">
     <div class="container h-100">
         <div class="blog-banner">
@@ -19,86 +16,66 @@
                 <h1>Product Checkout</h1>
                 <nav aria-label="breadcrumb" class="banner-breadcrumb">
                     <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Checkout</li>
                     </ol>
                 </nav>
             </div>
         </div>
     </div>
 </section>
-<!-- ================ end banner area ================= -->
 
-
-<!--================Checkout Area =================-->
 <section class="checkout_area section-margin--small">
-<div class="container">
-    <div class="billing_details">
-        <div class="row">
-            @if (session('error'))
-            <div class="alert alert-danger">{{ session('error') }}</div>
-            @endif
+    <div class="container">
+        <div class="billing_details">
+            <div class="row">
+                @if (session('error'))
+                <div class="alert alert-danger">{{ session('error') }}</div>
+                @endif
                 <div class="col-lg-8">
                     <h3>Billing Details</h3>
-            <form class="row contact_form" action=" {{route('home.checkoutproses')}} " method="post" novalidate="novalidate">
-                @csrf
+                    <form class="row contact_form" action="{{ route('home.checkoutproses') }}" method="post" novalidate="novalidate">
+                        @csrf
                         <div class="col-md-6 form-group p_star">
-                            <input type="hidden" name="invoice" value=" {{Str::random(4) . '-' . time()}} " required>
-                            <input type="hidden" name="customer_id" value=" {{Auth::guard('costumer')->user()->id}} " required>
-                            <input type="text" class="form-control" id="first" name="customer_name" value=" {{Auth::guard('costumer')->user()->name}} " required>
-                            <span class="placeholder" data-placeholder="First name"></span>
+                            <label for="customer_name">Nama</label>
+                            <input type="hidden" name="invoice" value="{{ Str::random(4) . '-' . time() }}" required>
+                            <input type="text" class="form-control" id="customer_name" name="customer_name" value="{{ Auth::guard('costumer')->user()->name }}" required>
+                            <span class="placeholder" data-placeholder="Name"></span>
                         </div>
                         <div class="col-md-6 form-group p_star">
-                            <input type="text" class="form-control" name="customer_phone" value=" {{Auth::guard('costumer')->user()->phone_number}} " required>
-                            <span class="placeholder" data-placeholder="Last name"></span>
+                            <label for="customer_phone">NO HP Aktif</label>
+                            <input type="text" class="form-control" id="customer_phone" name="customer_phone" value="{{ Auth::guard('costumer')->user()->phone_number }}" required>
+                            <span class="placeholder" data-placeholder="Phone"></span>
                         </div>
                         <div class="col-md-12 form-group">
-                            <input type="text" class="form-control" name="customer_address" value="{{Auth::guard('costumer')->user()->address}}" required>
-                            <input type="hidden" class="form-control" name="district_id" value="{{Auth::guard('costumer')->user()->district_id}}" required>
-                            <input type="hidden" class="form-control" name="citie_id" value="{{Auth::guard('costumer')->user()->citie_id}}" required>
+                            <label for="customer_address">Alamat</label>
+                            <input type="text" class="form-control" id="customer_address" name="customer_address" value="{{ Auth::guard('costumer')->user()->address }}" required>
+                            <label for="province_id">Provinsi</label>
+                            <select class="form-control" name="province_id" id="province_id" required>
+                                <option value="">Select Province</option>
+                                @foreach ($provinces as $province)
+                                <option value="{{ $province->id }}" {{ $province->id == old('province_id') ? 'selected' : '' }}>{{ $province->name }}</option>
+                                @endforeach
+                            </select>
+                            <label for="city_id">Kota</label>
+                            <select class="form-control" name="city_id" id="city_id" required>
+                                <option value="">Select City</option>
+                                @foreach ($cities as $city)
+                                <option value="{{ $city->id }}" {{ $city->id == old('city_id') ? 'selected' : '' }}>{{ $city->name }}</option>
+                                @endforeach
+                            </select>
+                            <label for="district_id">Kecamatan</label>
+                            <select class="form-control" name="district_id" id="district_id" required>
+                                <option value="">Select District</option>
+                                @foreach ($districts as $district)
+                                <option value="{{ $district->id }}" {{ $district->id == old('district_id') ? 'selected' : '' }}>{{ $district->name }}</option>
+                                @endforeach
+                            </select>
                             <input type="hidden" class="form-control" name="subtotal" value="{{ $subtotal }}" required>
-                            <input type="hidden" class="form-control" name="cost" value="{{ $subtotal + $cost[0]['costs'][1]['cost'][0]['value'] }}" required>
-                            <input type="hidden" class="form-control" name="shipping" value="{{ $cost[0]['costs'][1]['cost'][0]['value'] }}" required>
+                            <input type="hidden" class="form-control" name="cost" value="" required>
+                            <input type="hidden" class="form-control" name="shipping" value="" required>
                             <input type="hidden" class="form-control" name="status" value="0" required>
                         </div>
-                        {{-- <div class="col-md-6 form-group">
-                            <select class="country_select" id="province_id" name="province_destination" required>
-                                <option value="">Pilih Propinsi</option>
-                                @foreach ($provinces as $row)
-                                    <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-6 form-group p_star">
-                            <select class="country_select" name="city_destination" id="city_id" required>
-                                <option value="">Pilih Kabupaten/Kota</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 form-group p_star">
-                            <select class="country_select" name="courier" id="courier" required>
-                                <option>--Courier--</option>
-                                @foreach ($couriers as $courier => $value)
-                                    <option value="{{$courier}}"> {{$value}} </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <input type="hidden" name="weight" id="weight" value="{{$weight}}" required>
-                        <div class="col-md-6 form-group">
-                            <select class="country_select" name="service" id="service" required>
-                                <option>--Service--</option>
-                            </select>
-                        </div>
-                        <div class="col-md-12 form-group">
-                            <select class="country_select" name="cost" id="cost" required>
-                                <option>--Service--</option>
-                            </select>
-                        </div>
-                        <div class="col-md-12 form-group">
-                            <select class="country_select" name="shipping" id="shipping" required>
-                                <option>--Service--</option>
-                            </select>
-                        </div> --}}
-
                 </div>
                 <div class="col-lg-4">
                     <div class="order_box">
@@ -106,85 +83,122 @@
                         <ul class="list">
                             <li><a href="#"><h4>Product <span>Total</span></h4></a></li>
                             @foreach ($cart as $row)
-                                <li><a href="#">{{$row->product->name}} <span class="middle">x {{$row->qty}} </span> <span class="last">Rp. {{ number_format($row->cart_price * $row->qty) }} </span></a></li>
+                            <li><a href="#">{{ $row->product->name }} <span class="middle">x {{ $row->qty }}</span> <span class="last">Rp. {{ number_format($row->cart_price * $row->qty) }}</span></a></li>
                             @endforeach
                         </ul>
                         <ul class="list list_2">
                             <li><a href="#">Subtotal <span>Rp. {{ number_format($subtotal) }}</span></a></li>
-                            <li><a href="#">Kurir <span id="ongkir">{{ ($cost[0]['code']) }}</span></a></li>
-                            <li><a href="#">Ongkir <span id="ongkir"> Rp. {{ number_format($cost[0]['costs'][1]['cost'][0]['value']) }} </span></a></li>
-                            <li><a href="#">Perkiraan waktu sampai <span id="ongkir">({{ ($cost[0]['costs'][1]['cost'][0]['etd']) }})Hari</span></a></li>
-
-                            <li><a href="#">Total <span id="total">Rp. {{ number_format($subtotal + $cost[0]['costs'][1]['cost'][0]['value']) }}</span></a></li>
+                            <li><a href="#">Shipping <span id="shipping_cost">Rp. 0</span></a></li>
+                            <li><a href="#">Total <span id="total_cost">Rp. {{ number_format($subtotal) }}</span></a></li>
                         </ul>
-                        <div class="text-center">
-                            <button class="button button-paypal" type="submit">Bayar Pesanan</button>
-                        </div>
+                        <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
                     </div>
                 </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 </section>
-<!--================End Checkout Area =================-->
-@endsection
 
-{{-- @section('js')
-    <script type="text/javascript">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
         $('#province_id').on('change', function() {
-            $.ajax({
-                url: "{{ url('/api/city') }}",
-                type: "GET",
-                data: { province_id: $(this).val() },
-                success: function(html){
+            var province_id = $(this).val();
+            if (province_id) {
+                $.ajax({
+                    url: '/cities/' + province_id,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        $('#city_id').empty();
+                        $('#city_id').append('<option value="">Select City</option>');
+                        $.each(data, function(id, name) {
+                            $('#city_id').append('<option value="' + id + '">' + name + '</option>');
+                        });
+                        // Setelah mengisi ulang kota, pilih kota pertama jika ada
+                        var defaultCity = data[0];
+                        if (defaultCity) {
+                            $('#city_id').val(defaultCity.id);
+                            $('#city_id').trigger('change');
+                        }
+                    }
+                });
+            } else {
+                $('#city_id').empty();
+                $('#district_id').empty();
+            }
+        });
 
-                    $('#city_id').empty()
-                    $('#city_id').append('<option value="">Pilih Kabupaten/Kota</option>')
-                    $.each(html.data, function(key, item) {
-                        $('#city_id').append('<option value="'+item.id+'">'+item.name+'</option>')
-                    })
-                }
-            });
-        })
+        $('#city_id').on('change', function() {
+            var province_id = $('#province_id').val();
+            var city_id = $(this).val();
+            if (city_id) {
+                $.ajax({
+                    url: '/districts/' + province_id + '/' + city_id,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        $('#district_id').empty();
+                        $('#district_id').append('<option value="">Select District</option>');
+                        $.each(data, function(id, name) {
+                            $('#district_id').append('<option value="' + id + '">' + name + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#district_id').empty();
+            }
+        });
 
-        $('#courier').on('change', function() {
-            $('#service').empty()
-            $('#service').append('<option value="">Loading...</option>')
-            $.ajax({
-                url:"{{ route('home.cekongkir') }}",
-                type: "POST",
-                data: {
-                        _token:              $("meta[name='csrf-token']").attr("content"),
-                        city_origin:         $('input[name=city_origin]').val(),
-                        city_destination:    $('select[name=city_destination]').val(),
-                        courier:             $('select[name=courier]').val(),
-                        weight:              $('#weight').val(),
+        $('#district_id').on('change', function() {
+            var district_id = $(this).val();
+            var weight = {{ $weight }};
+            if (district_id) {
+                $.ajax({
+                    url: '/calculate-shipping-cost',
+                    type: "POST",
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        district_id: district_id,
+                        weight: weight
                     },
+                    success: function(data) {
+                        if (data.length > 0) {
+                            var cost = data[0]['costs'][0]['cost'][0]['value'];
+                            $('#shipping_cost').text('Rp. ' + cost.toLocaleString('id-ID'));
+                            $('#total_cost').text('Rp. ' + ({{ $subtotal }} + cost).toLocaleString('id-ID'));
+                            $('input[name="cost"]').val(cost);
+                            $('input[name="shipping"]').val(cost);
+                        }
+                    }
+                });
+            }
+        });
 
-                success: function(response){
-                    $('#service').empty();
-                    $('#service').append('<option value="">Pilih service</option>')
-                    $.each(response[0]['costs'], function (key, value) {
-                        $('#service').append('<option>'+response[0].code.toUpperCase()+' : <strong>'+value.service+'</strong>, '+value.cost[0].value+', ('+value.cost[0].etd+' hari)</option>')
+        // Skrip untuk memilih kota pertama saat halaman dimuat
+        var initialProvinceId = $('#province_id').val();
+        if (initialProvinceId) {
+            $.ajax({
+                url: '/cities/' + initialProvinceId,
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    $('#city_id').empty();
+                    $('#city_id').append('<option value="">Select City</option>');
+                    $.each(data, function(id, name) {
+                        $('#city_id').append('<option value="' + id + '">' + name + '</option>');
                     });
+                    // Setelah mengisi ulang kota, pilih kota pertama jika ada
+                    var defaultCity = data[0];
+                    if (defaultCity) {
+                        $('#city_id').val(defaultCity.id);
+                        $('#city_id').trigger('change');
+                    }
                 }
             });
-        })
+        }
+    });
+</script>
 
-        $('#service').on('change', function() {
-            let split = $(this).val().split(',')
-            $('#ongkir').text('Ongkir : Rp. ' + split[1])
-
-
-            let subtotal = "{{ $subtotal }}"
-            let total = parseInt(subtotal) + parseInt(split[1])
-            $('#total').text('Rp. ' + total)
-            $('#cost').append('<option value="'+total+'">'+total+'</option>')
-            $('#shipping').append('<option value="'+split[1]+'">'+split[1]+'</option>')
-            // $('#subtotal').append('<input type="text" class="form-control" name="shipping" value="'+split[1]+'" disabled required>')
-            // $('#resi').append('<input type="text" class="form-control" name="cost" value="'+total+'" disabled required>')
-        })
-
-    </script>
-@endsection --}}
+@endsection

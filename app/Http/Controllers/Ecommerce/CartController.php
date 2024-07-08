@@ -100,7 +100,7 @@ class CartController extends Controller
 
     public function getCity($id)
     {
-        $cities = Citie::where('province_id', $id)->pluck('name', 'id');
+        $cities = City::where('province_id', $id)->pluck('name', 'id');
         response()->json($cities);
     }
 

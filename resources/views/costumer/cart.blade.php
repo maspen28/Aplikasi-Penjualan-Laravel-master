@@ -102,11 +102,11 @@
                             </tr>
                         @endif
 
-                        <tr class="bottom_button">
+                        <!-- <tr class="bottom_button">
                             <td colspan="5" class="text-right">
                                 <button class="button" type="submit">Update</button>
                             </td>
-                        </tr>
+                        </tr> -->
                         <tr>
                             <td colspan="3"></td>
                             <td>

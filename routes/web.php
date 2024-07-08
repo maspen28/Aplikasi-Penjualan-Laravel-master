@@ -119,6 +119,12 @@ Route::group(['middelware' => 'costumer'], function () {
     Route::get('/test', function () {
         return response()->json(['message' => 'API is working']);
     });
+    Route::post('/calculate-shipping-cost', [ShippingController::class, 'calculateShippingCost'])->name('calculate.shipping.cost');
+
+    Route::post('/process-payment', 'PaymentController@processPayment')->name('process.payment');
+
+
+    
 
 
 });
