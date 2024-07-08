@@ -20,7 +20,7 @@
                     <label for="month">Bulan:</label>
                     <select id="month" name="month" class="form-control ml-2">
                         @for ($i = 1; $i <= 12; $i++)
-                            <option value="{{ $i }}" {{ $i == date('m') ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
+                            <option value="{{ $i }}" {{ $i == date('n') ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
                         @endfor
                     </select>
                 </div>
@@ -117,6 +117,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        var dailyRevenueChart;
+        var monthlyRevenueChart;
+
         function updateCharts() {
             var month = $('#month').val();
             var year = $('#year').val();
@@ -143,7 +146,7 @@
 
         $(document).ready(function() {
             var dailyRevenueCtx = document.getElementById('dailyRevenueChart').getContext('2d');
-            var dailyRevenueChart = new Chart(dailyRevenueCtx, {
+            dailyRevenueChart = new Chart(dailyRevenueCtx, {
                 type: 'line',
                 data: {
                     labels: {!! json_encode($dailyLabels) !!},
@@ -158,8 +161,10 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            callback: function(value) {
-                                return 'Rp ' + value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp ' + value.toLocaleString('id-ID');
+                                }
                             }
                         }
                     }
@@ -167,7 +172,7 @@
             });
 
             var monthlyRevenueCtx = document.getElementById('monthlyRevenueChart').getContext('2d');
-            var monthlyRevenueChart = new Chart(monthlyRevenueCtx, {
+            monthlyRevenueChart = new Chart(monthlyRevenueCtx, {
                 type: 'line',
                 data: {
                     labels: {!! json_encode($monthlyLabels) !!},
@@ -182,8 +187,10 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            callback: function(value) {
-                                return 'Rp ' + value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp ' + value.toLocaleString('id-ID');
+                                }
                             }
                         }
                     }

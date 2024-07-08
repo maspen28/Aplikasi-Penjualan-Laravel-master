@@ -75,6 +75,10 @@ class CheckoutController extends Controller {
           'created_at' => now(),
           'updated_at' => now(),
         ];
+        // Mengurangi stok produk
+          $product = $cartItem->product;
+          $product->stock -= $cartItem->qty;
+          $product->save();
       }
 
       OrderDetail::insert($orderDetails);

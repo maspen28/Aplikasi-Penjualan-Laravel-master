@@ -19,8 +19,6 @@ class DashboardController extends Controller
         // Handle if customer not found
         return redirect()->route('customers.index')->withErrors('Customer not found');
     }
-
-    
 }
 
     public function index()
