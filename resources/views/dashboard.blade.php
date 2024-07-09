@@ -60,7 +60,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="callout callout-info">
-                                        <small class="text-muted">Total Omset Bulanan</small>
+                                        <small class="text-muted">Total Omset Bulan ini</small>
                                         <br>
                                         <strong class="h4">Rp {{ number_format((float)$monthlyRevenue, 0, ',', '.') }}</strong>
                                     </div>

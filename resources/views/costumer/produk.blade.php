@@ -132,7 +132,7 @@ active
                         <img class="card-img" src="{{ asset('storage/products/' . $row->image) }}" alt="{{ $row->name }}">
                         <ul class="card-product__imgOverlay">
                           <li><button><i class="ti-shopping-cart"></i></button></li>
-                          <li><button><i class="ti-heart"></i></button></li>
+                          <!-- <li><button><i class="ti-heart"></i></button></li> -->
                         </ul>
                       </div>
                       <div class="card-body">

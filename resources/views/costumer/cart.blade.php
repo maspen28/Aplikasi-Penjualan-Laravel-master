@@ -3,6 +3,7 @@
 @section('css')
 <link rel="stylesheet" href="{{ asset('assets/vendors/linericon/style.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/vendors/nouislider/nouislider.min.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/css/bootstrap.min.css">
 @endsection
 
 @section('title')
@@ -49,11 +50,12 @@
                                 @if ($row->product)
                                     <tr>
                                         <td>
-                                            <form method="POST" action="{{ url('/customer/cart/delete/'.$row->id)}}" accept-charset="UTF-8" style="display:inline">
+                                            <form method="POST" action="{{ url('/costumer/cart/delete/'.$row->id)}}" accept-charset="UTF-8" style="display:inline">
                                                 @method('delete')
                                                 @csrf
                                                 <button class="btn btn-danger" type="submit"><i class="ti-trash"></i></button>
                                             </form>
+
                                         </td>
                                         <td>
                                             <div class="media">
@@ -102,11 +104,6 @@
                             </tr>
                         @endif
 
-                        <!-- <tr class="bottom_button">
-                            <td colspan="5" class="text-right">
-                                <button class="button" type="submit">Update</button>
-                            </td>
-                        </tr> -->
                         <tr>
                             <td colspan="3"></td>
                             <td>
@@ -123,10 +120,10 @@
                                 <div class="checkout_btn_inner d-flex align-items-center">
                                     @if ($cart->count())
                                         <a class="gray_btn" href="{{ route('home.product') }}">Lanjutkan Berbelanja</a>
-                                        <a class="primary-btn ml-2" href="{{ route('home.checkout') }}">Checkout</a>
+                                        <button class="primary-btn ml-2" data-toggle="modal" data-target="#orderSummaryModal">Checkout</button>
                                     @else
                                         <a class="primary-btn ml-2" href="{{ route('home.product') }}">Lanjutkan Berbelanja</a>
-                                        <a href="{{ route('home.checkout') }}"><button class="gray_btn" disabled="disabled">Checkout</button></a>
+                                        <button class="gray_btn" disabled="disabled">Checkout</button>
                                     @endif
                                 </div>
                             </td>
@@ -138,8 +135,88 @@
     </div>
 </section>
 <!--================End Cart Area =================-->
+
+<!-- Order Summary Modal -->
+<div class="modal fade" id="orderSummaryModal" tabindex="-1" role="dialog" aria-labelledby="orderSummaryModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="orderSummaryModalLabel">Order Summary</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Product</th>
+              <th scope="col">Price</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach ($cart as $row)
+              <tr>
+                <td>{{ $row->product->name }}</td>
+                <td>Rp.{{ number_format($row->product->price) }}</td>
+                <td>{{ $row->qty }}</td>
+                <td>Rp.{{ number_format($row->product->price * $row->qty) }}</td>
+              </tr>
+            @endforeach
+            <tr>
+              <td colspan="3"><strong>Subtotal</strong></td>
+              <td><strong>Rp.{{ number_format($subtotal) }}</strong></td>
+
+              <text>Silahkan melanjutkan transaksi di Aplikasi Mobile</text>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <!-- <button type="button" class="btn btn-primary" id="proceedToCheckout">Proceed to Checkout</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Message Modal -->
+<!-- <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="messageModalLabel">Information</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Silahkan melanjutkan transaksi di Aplikasi Mobile
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div> -->
 @endsection
 
 @section('js')
-<script src="{{ asset('assets/vendors/nice-select/jquery.nice-select.min.js') }}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Handle the "Proceed to Checkout" button click
+        $('#orderSummaryModal').on('shown.bs.modal', function () {
+            $('#proceedToCheckout').click(function() {
+                // Show the message modal
+                $('#messageModal').modal('show');
+            });
+        });
+    });
+</script>
 @endsection
+
