@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -25,61 +26,53 @@ class DashboardController extends Controller {
     $monthlyRevenue = Order::whereMonth('created_at', date('m'))->sum('cost'); // pastikan ini float/integer
     $ordersToShip = Order::where('status', 3)->count();
 
-    $dailyRevenue = Order::selectRaw('DATE(created_at) as date, SUM(cost) as total')
-      ->groupBy('date')
-      ->pluck('total', 'date');
+        // Query untuk mengambil data jumlah produk yang terjual dari orders_detail
+        $soldProducts = OrderDetail::selectRaw('product_id, SUM(qty) as total')
+            ->groupBy('product_id')
+            ->get()
+            ->pluck('cost', 'product_id');
 
-    $dailyLabels = $dailyRevenue->keys();
-    $dailyRevenueValues = $dailyRevenue->values();
+        // Ambil daftar nama produk (bisa disiapkan untuk digunakan jika diperlukan)
+        $productNames = $soldProducts->keys();
 
-    $monthlyRevenueData = Order::selectRaw('MONTH(created_at) as month, SUM(cost) as total')
-      ->groupBy('month')
-      ->pluck('total', 'month');
+        // Jumlah produk yang terjual
+        $soldQuantities = $soldProducts->values();
 
-    $monthlyLabels = $monthlyRevenueData->keys();
-    $monthlyRevenueValues = $monthlyRevenueData->values();
-
-    return view('dashboard', compact(
-      'totalCustomers', 'totalProducts', 'monthlyRevenue', 'ordersToShip',
-      'dailyLabels', 'dailyRevenueValues', 'monthlyLabels', 'monthlyRevenueValues'
-    ));
+        // Kirim data ke view 'dashboard'
+        return view('dashboard', compact(
+            'totalCustomers', 'totalProducts', 'monthlyRevenue', 'ordersToShip',
+            'soldQuantities', 'productNames'
+        ));
   }
 
-  public function getData(Request $request) {
-    $month = $request->input('month', date('m'));
-    $year = $request->input('year', date('Y'));
+    public function getData(Request $request)
+    {
+        // Ambil bulan dan tahun dari request, defaultnya saat ini jika tidak ada
+        $month = $request->input('month', date('m'));
+        $year = $request->input('year', date('Y'));
 
-    // Query your data based on the selected month and year
-    $startDate = Carbon::createFromDate($year, $month, 1);
-    $endDate = $startDate->copy()->endOfMonth();
+        // Buat tanggal mulai dan akhir berdasarkan bulan dan tahun yang dipilih
+        $startDate = Carbon::createFromDate($year, $month, 1);
+        $endDate = $startDate->copy()->endOfMonth();
 
-    // Daily revenue
-    $dailyRevenue = Order::whereBetween('created_at', [$startDate, $endDate])
-      ->selectRaw('DATE(created_at) as date, SUM(cost) as total')
-      ->groupBy('date')
-      ->orderBy('date')
-      ->get()
-      ->pluck('total', 'date');
+        // Query untuk mengambil data jumlah produk yang terjual dari orders_detail
+        $soldProducts = OrderDetail::whereHas('order', function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            })
+            ->selectRaw('product_id, SUM(qty) as total')
+            ->groupBy('product_id')
+            ->get()
+            ->pluck('cost', 'product_id');
 
-    $dailyLabels = $dailyRevenue->keys();
-    $dailyRevenueValues = $dailyRevenue->values();
+        // Ambil daftar nama produk (bisa disiapkan untuk digunakan jika diperlukan)
+        $productNames = $soldProducts->keys();
 
-    // Monthly revenue
-    $monthlyRevenue = Order::whereYear('created_at', $year)
-      ->selectRaw('MONTH(created_at) as month, SUM(cost) as total')
-      ->groupBy('month')
-      ->orderBy('month')
-      ->get()
-      ->pluck('total', 'month');
+        // Jumlah produk yang terjual
+        $soldQuantities = $soldProducts->values();
 
-    $monthlyLabels = $monthlyRevenue->keys();
-    $monthlyRevenueValues = $monthlyRevenue->values();
-
-    return response()->json([
-      'dailyLabels' => $dailyLabels,
-      'dailyRevenueValues' => $dailyRevenueValues,
-      'monthlyLabels' => $monthlyLabels,
-      'monthlyRevenueValues' => $monthlyRevenueValues,
-    ]);
-  }
+        return view('dashboard', [
+            'soldQuantities' => $soldQuantities,
+            'productNames' => $productNames,
+        ]);
+    }
 }

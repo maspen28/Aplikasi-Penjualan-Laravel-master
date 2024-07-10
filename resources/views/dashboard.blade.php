@@ -14,27 +14,6 @@
     </ol>
     <div class="container-fluid">
         <div class="animated fadeIn">
-            <!-- Filter Form -->
-            <form id="filter-form" class="form-inline mb-3">
-                <div class="form-group mr-2">
-                    <label for="month">Bulan:</label>
-                    <select id="month" name="month" class="form-control ml-2">
-                        @for ($i = 1; $i <= 12; $i++)
-                            <option value="{{ $i }}" {{ $i == date('n') ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
-                        @endfor
-                    </select>
-                </div>
-                <div class="form-group mr-2">
-                    <label for="year">Tahun:</label>
-                    <select id="year" name="year" class="form-control ml-2">
-                        @for ($i = date('Y'); $i >= 2000; $i--)
-                            <option value="{{ $i }}" {{ $i == date('Y') ? 'selected' : '' }}>{{ $i }}</option>
-                        @endfor
-                    </select>
-                </div>
-                <button type="button" class="btn btn-primary" onclick="updateCharts()">Filter</button>
-            </form>
-
             <!-- Dashboard Content -->
             <div class="row">
                 <div class="col-md-12">
@@ -62,7 +41,7 @@
                                     <div class="callout callout-info">
                                         <small class="text-muted">Total Omset Bulan ini</small>
                                         <br>
-                                        <strong class="h4">Rp {{ number_format((float)$monthlyRevenue, 0, ',', '.') }}</strong>
+                                        <strong class="h4">Rp {{ number_format($monthlyRevenue, 0, ',', '.') }}</strong>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -80,24 +59,13 @@
 
             <!-- Row for charts -->
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="card-title">Grafik Omset Harian</h4>
+                            <h4 class="card-title">Grafik Jumlah Produk Terjual</h4>
                         </div>
                         <div class="card-body">
-                            <canvas id="dailyRevenueChart" height="200"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title">Grafik Omset Bulanan</h4>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="monthlyRevenueChart" height="200"></canvas>
+                            <canvas id="soldProductsChart" width="400" height="300"></canvas>
                         </div>
                     </div>
                 </div>
@@ -108,79 +76,27 @@
 </main>
 @stop
 
-@section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
-@stop
-
 @section('js')
-    <script> console.log('Hi!'); </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        var dailyRevenueChart;
-        var monthlyRevenueChart;
-
-        function updateCharts() {
-            var month = $('#month').val();
-            var year = $('#year').val();
-            $.ajax({
-                url: '{{ route("dashboard.data") }}',
-                type: 'GET',
-                data: {
-                    month: month,
-                    year: year
-                },
-                success: function(response) {
-                    console.log(response);
-                    // Update charts with new data
-                    dailyRevenueChart.data.labels = response.dailyLabels;
-                    dailyRevenueChart.data.datasets[0].data = response.dailyRevenueValues;
-                    dailyRevenueChart.update();
-
-                    monthlyRevenueChart.data.labels = response.monthlyLabels;
-                    monthlyRevenueChart.data.datasets[0].data = response.monthlyRevenueValues;
-                    monthlyRevenueChart.update();
-                }
-            });
-        }
-
         $(document).ready(function() {
-            var dailyRevenueCtx = document.getElementById('dailyRevenueChart').getContext('2d');
-            dailyRevenueChart = new Chart(dailyRevenueCtx, {
-                type: 'line',
-                data: {
-                    labels: {!! json_encode($dailyLabels) !!},
-                    datasets: [{
-                        label: 'Omset Harian',
-                        data: {!! json_encode($dailyRevenueValues) !!},
-                        borderColor: 'rgb(75, 192, 192)',
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return 'Rp ' + value.toLocaleString('id-ID');
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+            // Ambil data yang diberikan oleh controller
+            var soldQuantities = @json($soldQuantities);
+            var productNames = @json($productNames);
 
-            var monthlyRevenueCtx = document.getElementById('monthlyRevenueChart').getContext('2d');
-            monthlyRevenueChart = new Chart(monthlyRevenueCtx, {
-                type: 'line',
+            // Inisialisasi grafik bar
+            var soldProductsCtx = document.getElementById('soldProductsChart').getContext('2d');
+            var soldProductsChart = new Chart(soldProductsCtx, {
+                type: 'bar',
                 data: {
-                    labels: {!! json_encode($monthlyLabels) !!},
+                    labels: productNames,
                     datasets: [{
-                        label: 'Omset Bulanan',
-                        data: {!! json_encode($monthlyRevenueValues) !!},
-                        borderColor: 'rgb(54, 162, 235)',
-                        tension: 0.1
+                        label: 'Jumlah Terjual',
+                        data: soldQuantities,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
                     }]
                 },
                 options: {
@@ -189,7 +105,7 @@
                             beginAtZero: true,
                             ticks: {
                                 callback: function(value) {
-                                    return 'Rp ' + value.toLocaleString('id-ID');
+                                    return value;
                                 }
                             }
                         }
