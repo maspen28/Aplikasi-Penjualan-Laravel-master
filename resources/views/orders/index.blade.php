@@ -54,7 +54,8 @@
                                         <tr>
                                             <th>InvoiceID</th>
                                             <th>Pelanggan</th>
-                                            <th>Subtotal</th>
+                                            <th>Jumlah Ongkir</th>
+                                            <th>Total</th>
                                             <th>Tanggal</th>
                                             <th>Status</th>
                                             @if (Auth::user()->id_privileges == 1)
@@ -70,14 +71,15 @@
                                                 <strong>{{ $row->customer_name }}</strong><br>
                                                 <label><strong>Telp:</strong> {{ $row->customer_phone }}</label><br>
                                                 <label>
-                                                    <strong>Alamat:</strong>
+                                                    <strong>Alamat Tujuan:</strong>
                                                     {{ $row->customer_address }} 
                                                     {{ $row->customer->district->name ?? '-' }} - 
                                                     {{ $row->customer->district->citie->name ?? '-' }},
                                                     {{ $row->customer->district->citie->postal_code ?? '-' }}
                                                 </label>
                                             </td>
-                                            <td>Rp {{ number_format($row->subtotal) }}</td>
+                                            <td>Rp {{ number_format($row->ongkos_kirim) }}</td>
+                                            <td>Rp {{ number_format($row->cost) }}</td>
                                             <td>{{ $row->created_at->format('d-m-Y') }}</td>
                                             <td>
                                                 @if ($row->status == 0)
