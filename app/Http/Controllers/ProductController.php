@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Product;
+use App\Models\StockHistory;
 use App\Models\Category;
 use Illuminate\Support\Facades\File;
 use App\Jobs\ProductJob;
@@ -14,6 +15,7 @@ class ProductController extends Controller
     public function index()
     {
         $product = Product::with(['category'])->orderBy('created_at', 'DESC');
+        $stockHistories = StockHistory::with('product')->orderBy('updated_at', 'DESC')->paginate(10);
         if (request()->q != '') {
             $product = $product->where('name', 'LIKE', '%' . request()->q . '%');
         }
@@ -22,7 +24,7 @@ class ProductController extends Controller
         // Ambil kategori dari database
         $category = Category::orderBy('name', 'DESC')->get();
 
-        return view('produk.produk', compact('product', 'category'));
+        return view('produk.produk', compact('product', 'category', 'stockHistories'));
     }
 
 
@@ -42,7 +44,7 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id', //CATEGORY_ID KITA CEK HARUS ADA DI TABLE CATEGORIES DENGAN FIELD ID
             'price' => 'required|integer',
             'weight' => 'required|integer',
-            'stock' => 'required|integer',
+            // 'stock' => 'required|integer',
             'image' => 'required|image|mimes:png,jpeg,jpg' //GAMBAR DIVALIDASI HARUS BERTIPE PNG,JPG DAN JPEG
         ]);
 
@@ -64,7 +66,7 @@ class ProductController extends Controller
                 'image' => $filename, //PASTIKAN MENGGUNAKAN VARIABLE FILENAM YANG HANYA BERISI NAMA FILE SAJA (STRING)
                 'price' => $request->price,
                 'weight' => $request->weight,
-                'stock' => $request->stock,
+                // 'stock' => $request->stock,
                 'status' => $request->status
             ]);
             //JIKA SUDAH MAKA REDIRECT KE LIST PRODUK
@@ -155,4 +157,24 @@ class ProductController extends Controller
         ]);
         return redirect(route('product.index'))->with(['success' => 'Data Produk Diperbaharui']);
     }
+
+    public function addStock(Request $request, $id)
+    {
+        $request->validate([
+            'stock' => 'required|integer|min:1'
+        ]);
+
+        $product = Product::findOrFail($id);
+        $product->stock += $request->input('stock');
+        $product->save();
+
+        // Simpan riwayat penambahan stok
+        StockHistory::create([
+            'product_id' => $product->id,
+            'added_stock' => $request->input('stock')
+        ]);
+
+        return redirect()->route('product.index')->with('success', 'Stok produk berhasil ditambahkan');
+    }
+
 }

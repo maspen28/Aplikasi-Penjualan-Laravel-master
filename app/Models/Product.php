@@ -42,4 +42,10 @@ class Product extends Model
             'qty' => $qty
         ]);
     }
+
+    public function stockHistories()
+    {
+        return $this->hasMany(StockHistory::class);
+    }
+
 }

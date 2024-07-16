@@ -264,6 +264,12 @@ return [
             'url'  => 'auth/product',
             'icon' => 'fas fa-box',
         ],
+        [
+            'text' => 'Kelola Diskon',
+            'url'  => 'auth/diskon',
+            'icon' => 'fas fa-puzzle-piece',
+        ],
+
         ['header' => 'Transaksi'],
         [
             'text' => 'Pesanan',

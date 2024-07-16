@@ -53,6 +53,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('product/{product_id}/edit', [ProductController::class, 'edit'])->name('product.edit');
     Route::put('product/{product_id}', [ProductController::class, 'update'])->name('product.update');
     Route::delete('product/{product_id}', [ProductController::class, 'destroy'])->name('product.destroy');
+    Route::post('product/{id}/add-stock', [ProductController::class, 'addStock'])->name('product.addStock');
 
     Route::get('product/bulk', [ProductController::class, 'massUploadForm'])->name('product.bulk');
     Route::post('product/bulk', [ProductController::class, 'massUpload'])->name('product.saveBulk');
