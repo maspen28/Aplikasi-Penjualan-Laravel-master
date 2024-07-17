@@ -6,6 +6,7 @@ use App\Http\Controllers\CostumersController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CostumerRegistriController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Ecommerce\FrontController;
 use App\Http\Controllers\Ecommerce\CartController;
@@ -55,8 +56,15 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('product/{product_id}', [ProductController::class, 'destroy'])->name('product.destroy');
     Route::post('product/{id}/add-stock', [ProductController::class, 'addStock'])->name('product.addStock');
 
-    Route::get('product/bulk', [ProductController::class, 'massUploadForm'])->name('product.bulk');
-    Route::post('product/bulk', [ProductController::class, 'massUpload'])->name('product.saveBulk');
+/* route discount master */
+    Route::get('auth/discount', [DiscountController::class, 'index'])->name('discount.index');
+    Route::post('create/discount', [DiscountController::class, 'store'])->name('discount.store');
+    Route::put('discount/{discount_id}', [DiscountController::class, 'update'])->name('discount.update');
+    Route::delete('discount/{product_id}', [DiscountController::class, 'destroy'])->name('discount.destroy');
+
+
+    // Route::get('product/bulk', [ProductController::class, 'massUploadForm'])->name('product.bulk');
+    // Route::post('product/bulk', [ProductController::class, 'massUpload'])->name('product.saveBulk');
 
     /* route akun (customer) */
     Route::get('auth/akun', [CustomerAccountController::class, 'index'])->name('customers.index');

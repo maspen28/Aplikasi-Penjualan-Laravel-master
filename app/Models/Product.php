@@ -48,4 +48,14 @@ class Product extends Model
         return $this->hasMany(StockHistory::class);
     }
 
+    public function discounts()
+    {
+        return $this->hasMany(Discount::class);
+    }
+    
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class, 'product_id', 'id');
+    }
+
 }

@@ -54,6 +54,7 @@
                                         <tr>
                                             <th>InvoiceID</th>
                                             <th>Pelanggan</th>
+                                            <th>Produk</th> <!-- Tambahkan kolom Produk -->
                                             <th>Jumlah Ongkir</th>
                                             <th>Total</th>
                                             <th>Tanggal</th>
@@ -77,6 +78,15 @@
                                                     {{ $row->customer->district->citie->name ?? '-' }},
                                                     {{ $row->customer->district->citie->postal_code ?? '-' }}
                                                 </label>
+                                            </td>
+                                            <td> <!-- Kolom Produk -->
+                                                @if ($row->orderDetails && $row->orderDetails->count() > 0)
+                                                    @foreach ($row->orderDetails as $detail)
+                                                        {{ $detail->product->name }}<br>
+                                                    @endforeach
+                                                @else
+                                                    <span>Tidak ada produk</span>
+                                                @endif
                                             </td>
                                             <td>Rp {{ number_format($row->ongkos_kirim) }}</td>
                                             <td>Rp {{ number_format($row->cost) }}</td>
@@ -127,7 +137,7 @@
                                         </tr>
                                         @empty
                                         <tr>
-                                            <td colspan="6" class="text-center">Tidak ada data</td>
+                                            <td colspan="7" class="text-center">Tidak ada data</td> <!-- Update kolom colspan ke 7 -->
                                         </tr>
                                         @endforelse
                                     </tbody>

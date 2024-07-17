@@ -23,23 +23,27 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::with(['customer.district.citie.province'])
+        // Load orders with related customer, customer district, city, province, and order details with product
+        $orders = Order::with(['customer.district.citie.province', 'details.product'])
             ->orderBy('created_at', 'DESC');
 
         if (request()->q != '') {
             $orders = $orders->where(function($q) {
                 $q->where('customer_name', 'LIKE', '%' . request()->q . '%')
-                ->orWhere('invoice', 'LIKE', '%' . request()->q . '%')
-                ->orWhere('customer_address', 'LIKE', '%' . request()->q . '%');
+                    ->orWhere('invoice', 'LIKE', '%' . request()->q . '%')
+                    ->orWhere('customer_address', 'LIKE', '%' . request()->q . '%');
             });
         }
 
         if (request()->status != '') {
             $orders = $orders->where('status', request()->status);
         }
+
         $orders = $orders->paginate(10);
+
         return view('orders.index', compact('orders'));
     }
+
 
     public function update(Request $request){
         $orders = Order::where('id', $request->id)->update([

@@ -266,7 +266,7 @@ return [
         ],
         [
             'text' => 'Kelola Diskon',
-            'url'  => 'auth/diskon',
+            'url'  => 'auth/discount',
             'icon' => 'fas fa-puzzle-piece',
         ],
 
