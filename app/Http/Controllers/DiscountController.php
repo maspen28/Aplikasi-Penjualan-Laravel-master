@@ -17,7 +17,6 @@ class DiscountController extends Controller {
   public function store(Request $request) {
     $request->validate([
       'discount_name' => 'required|string|max:255',
-      'product_id' => 'required|exists:products,id',
       'besar_diskon' => 'required|numeric',
     ]);
 
@@ -29,7 +28,6 @@ class DiscountController extends Controller {
   public function update(Request $request, Discount $discount) {
     $request->validate([
       'discount_name' => 'required|string|max:255',
-      'product_id' => 'required|exists:products,id',
       'besar_diskon' => 'required|numeric',
     ]);
 

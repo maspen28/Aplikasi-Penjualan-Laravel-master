@@ -40,7 +40,6 @@
                                         <tr>
                                             <th>#</th>
                                             <th>Nama Diskon</th>
-                                            <th>Produk</th>
                                             <th>Besar Diskon (%)</th>
                                             <th>Created At</th>
                                             <th>Aksi</th>
@@ -51,7 +50,6 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $discount->discount_name }}</td>
-                                            <td>{{ $discount->product->name }}</td>
                                             <td>{{ $discount->besar_diskon }}</td>
                                             <td>{{ $discount->created_at->format('d-m-Y H:i:s') }}</td>
                                             <td>
@@ -98,16 +96,6 @@
                         <label for="discount_name">Nama Diskon</label>
                         <input type="text" name="discount_name" class="form-control" value="{{ old('discount_name') }}" required>
                         <p class="text-danger">{{ $errors->first('discount_name') }}</p>
-                    </div>
-                    <div class="form-group">
-                        <label for="product_id">Produk</label>
-                        <select name="product_id" class="form-control" required>
-                            <option value="">Pilih Produk</option>
-                            @foreach ($products as $product)
-                                <option value="{{ $product->id }}">{{ $product->name }}</option>
-                            @endforeach
-                        </select>
-                        <p class="text-danger">{{ $errors->first('product_id') }}</p>
                     </div>
                     <div class="form-group">
                         <label for="besar_diskon">Besar Diskon (%)</label>

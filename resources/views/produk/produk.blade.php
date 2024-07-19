@@ -165,6 +165,16 @@
                                         <p class="text-danger">{{ $errors->first('stock') }}</p>
                                     </div>
                                     <div class="form-group">
+                                        <label for="discount_id">Diskon</label>
+                                        <select name="discount_id" class="form-control" required>
+                                            <option value="">Pilih</option>
+                                            @foreach ($discount as $row)
+                                            <option value="{{ $row->id }}">{{ $row->discount_name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <p class="text-danger">{{ $errors->first('discount_id') }}</p>
+                                    </div>
+                                    <div class="form-group">
                                         <label for="status">Status</label>
                                         <select name="status" class="form-control" required>
                                             <option value="">Pilih</option>
@@ -258,6 +268,16 @@
                         <label for="stock">Stok</label>
                         <input type="number" name="stock" class="form-control" value="{{ $row->stock }}" required>
                         <p class="text-danger">{{ $errors->first('stock') }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="discount_id">Diskon</label>
+                        <select name="discount_id" class="form-control" required>
+                            <option value="">Pilih</option>
+                        @foreach ($discount as $dis)
+                            <option value="{{ $dis->id }}" {{ $row->discount_id == $dis->id ? 'selected' : '' }}>{{ $dis->discount_name }}</option>
+                        @endforeach
+                        </select>
+                        <p class="text-danger">{{ $errors->first('discount_id') }}</p>
                     </div>
                     <div class="form-group">
                         <label for="image">Foto Produk</label>

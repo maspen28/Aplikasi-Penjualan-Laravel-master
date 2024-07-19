@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use App\Models\Product;
 use App\Models\StockHistory;
 use App\Models\Category;
+use App\Models\Discount;
 use Illuminate\Support\Facades\File;
 use App\Jobs\ProductJob;
 
@@ -23,8 +24,9 @@ class ProductController extends Controller
 
         // Ambil kategori dari database
         $category = Category::orderBy('name', 'DESC')->get();
+        $discount = Discount::orderBy('discount_name', 'DESC')->get();
 
-        return view('produk.produk', compact('product', 'category', 'stockHistories'));
+        return view('produk.produk', compact('product', 'category', 'stockHistories', 'discount'));
     }
 
 
@@ -44,6 +46,7 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id', //CATEGORY_ID KITA CEK HARUS ADA DI TABLE CATEGORIES DENGAN FIELD ID
             'price' => 'required|integer',
             'weight' => 'required|integer',
+            'discount_id' => 'nullable|exists:discounts,id',
             // 'stock' => 'required|integer',
             'image' => 'required|image|mimes:png,jpeg,jpg' //GAMBAR DIVALIDASI HARUS BERTIPE PNG,JPG DAN JPEG
         ]);
@@ -66,6 +69,7 @@ class ProductController extends Controller
                 'image' => $filename, //PASTIKAN MENGGUNAKAN VARIABLE FILENAM YANG HANYA BERISI NAMA FILE SAJA (STRING)
                 'price' => $request->price,
                 'weight' => $request->weight,
+                'discount_id' => $request->discount_id,
                 // 'stock' => $request->stock,
                 'status' => $request->status
             ]);
@@ -129,6 +133,7 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|integer',
             'weight' => 'required|integer',
+            'discount_id' => 'required|exists:discounts,id',
             'image' => 'nullable|image|mimes:png,jpeg,jpg' //IMAGE BISA NULLABLE
         ]);
 
@@ -152,6 +157,7 @@ class ProductController extends Controller
             'category_id' => $request->category_id,
             'price' => $request->price,
             'weight' => $request->weight,
+            'discount_id' => $request->discount_id,
             'status' => $request->status,
             'image' => $filename
         ]);
