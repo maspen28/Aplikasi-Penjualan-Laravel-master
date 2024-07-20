@@ -62,7 +62,8 @@ class ProductController extends Controller {
         
         $cartItems = Cart::where('customer_id', $customer_id)
                         ->join('products', 'carts.product_id', '=', 'products.id')
-                        ->select('carts.id', 'products.id as product_id', 'products.name as nama_produk', 'products.price', 'products.weight', 'products.image', 'carts.qty')
+                        ->leftJoin('discounts', 'products.discount_id', '=', 'discounts.id')
+                        ->select('carts.id', 'products.id as product_id', 'products.name as nama_produk', 'products.price', 'products.weight', 'products.image', 'carts.qty', 'discounts.id', 'discounts.discount_name', 'discounts.besar_diskon')
                         ->get();
 
         if ($cartItems->isNotEmpty()) {
