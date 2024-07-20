@@ -48,9 +48,9 @@ class Product extends Model
         return $this->hasMany(StockHistory::class);
     }
 
-    public function discounts()
+    public function discount()
     {
-        return $this->hasMany(Discount::class);
+        return $this->belongsTo(Discount::class, 'discount_id');
     }
     
     public function orderDetails()

@@ -7,35 +7,35 @@ use App\Models\Discount;
 use Illuminate\Http\Request;
 
 class DiscountController extends Controller {
-  public function applyDiscount(Request $request) {
-    $validated = $request->validate([
-      'cart_total' => 'required|numeric',
-      'discount_name' => 'nullable|string',
-    ]);
+    public function applyDiscount(Request $request) {
+        $validated = $request->validate([
+            'cart_total' => 'required|numeric',
+            'discount_id' => 'nullable|string',
+        ]);
 
-    $cartTotal = $validated['cart_total'];
-    $discountName = $validated['discount_name'];
+        $cartTotal = $validated['cart_total'];
+        $discountId = $validated['discount_id'];
 
-    $discountAmount = 0;
+        $discountAmount = 0;
 
-    if ($discountName) {
-      // Cari diskon berdasarkan nama
-      $discount = Discount::where('discount_name', $discountName)->first();
+        if ($discountId) {
+            // Find discount by ID
+            $discount = Discount::where('id', $discountId)->first();
 
-      if ($discount) {
-        $discountAmount = $discount->besar_diskon;
-      } else {
-        return response()->json(['message' => 'Invalid discount name'], 400);
-      }
+            if ($discount) {
+                $discountAmount = $discount->besar_diskon;
+            } else {
+                return response()->json(['message' => 'Invalid discount ID'], 400);
+            }
+        }
+
+        // Calculate total after discount
+        $totalAfterDiscount = $cartTotal - $discountAmount;
+
+        return response()->json([
+            'cart_total' => $cartTotal,
+            'discount_amount' => $discountAmount,
+            'total_after_discount' => $totalAfterDiscount,
+        ]);
     }
-
-    // Hitung total setelah diskon
-    $totalAfterDiscount = $cartTotal - $discountAmount;
-
-    return response()->json([
-      'cart_total' => $cartTotal,
-      'discount_amount' => $discountAmount,
-      'total_after_discount' => $totalAfterDiscount,
-    ]);
-  }
 }
