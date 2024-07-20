@@ -57,21 +57,32 @@ class ProductController extends Controller {
 
   }
 
-    public static function cart(Request $request) {
-        $customer_id = $request->input('customer_id');
-        
-        $cartItems = Cart::where('customer_id', $customer_id)
-                        ->join('products', 'carts.product_id', '=', 'products.id')
-                        ->leftJoin('discounts', 'products.discount_id', '=', 'discounts.id')
-                        ->select('carts.id', 'products.id as product_id', 'products.name as nama_produk', 'products.price', 'products.weight', 'products.image', 'carts.qty', 'discounts.id', 'discounts.discount_name', 'discounts.besar_diskon')
-                        ->get();
+public static function cart(Request $request) {
+    $customer_id = $request->input('customer_id');
+    
+    $cartItems = Cart::where('customer_id', $customer_id)
+                    ->join('products', 'carts.product_id', '=', 'products.id')
+                    ->leftJoin('discounts', 'products.discount_id', '=', 'discounts.id')
+                    ->select(
+                        'carts.id as cart_id', 
+                        'products.id as product_id', 
+                        'products.name as nama_produk', 
+                        'products.price', 
+                        'products.weight', 
+                        'products.image', 
+                        'carts.qty', 
+                        'discounts.id as discount_id', 
+                        'discounts.discount_name', 
+                        'discounts.besar_diskon'
+                    )
+                    ->get();
 
-        if ($cartItems->isNotEmpty()) {
-            return ApiResponseUtils::success($cartItems);
-        } else {
-            return ApiResponseUtils::failed();
-        }
+    if ($cartItems->isNotEmpty()) {
+        return ApiResponseUtils::success($cartItems);
+    } else {
+        return ApiResponseUtils::failed();
     }
+}
 
     public static function addToCart(Request $request) {
         $id = $request->input('product_id');
