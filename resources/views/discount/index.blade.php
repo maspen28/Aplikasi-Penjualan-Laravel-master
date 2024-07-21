@@ -133,16 +133,6 @@
                         <p class="text-danger">{{ $errors->first('discount_name') }}</p>
                     </div>
                     <div class="form-group">
-                        <label for="product_id">Produk</label>
-                        <select name="product_id" class="form-control" required>
-                            <option value="">Pilih Produk</option>
-                            @foreach ($products as $product)
-                                <option value="{{ $product->id }}" {{ $discount->product_id == $product->id ? 'selected' : '' }}>{{ $product->name }}</option>
-                            @endforeach
-                        </select>
-                        <p class="text-danger">{{ $errors->first('product_id') }}</p>
-                    </div>
-                    <div class="form-group">
                         <label for="besar_diskon">Besar Diskon (%)</label>
                         <input type="number" name="besar_diskon" class="form-control" value="{{ $discount->besar_diskon }}" required>
                         <p class="text-danger">{{ $errors->first('besar_diskon') }}</p>

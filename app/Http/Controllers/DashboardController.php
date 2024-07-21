@@ -21,30 +21,31 @@ class DashboardController extends Controller {
   }
 
   public function index() {
-    $totalCustomers = Customer::count();
-    $totalProducts = Product::count();
-    $monthlyRevenue = Order::whereMonth('created_at', date('m'))->sum('cost'); // pastikan ini float/integer
-    $ordersToShip = Order::where('status', 3)->count();
+      $totalCustomers = Customer::count();
+      $totalProducts = Product::count();
+      $monthlyRevenue = Order::whereMonth('created_at', date('m'))->sum('cost'); // pastikan ini float/integer
+      $ordersToShip = Order::where('status', 3)->count();
 
-        // Query untuk mengambil data jumlah produk yang terjual dari orders_detail
-        $soldProducts = OrderDetail::selectRaw('product_id, SUM(qty) as total')
-            ->groupBy('product_id')
-            ->get()
-            ->pluck('total', 'product_id');
+      // Query untuk mengambil data jumlah produk yang terjual dari orders_detail dan nama produk dari products
+      $soldProducts = OrderDetail::join('products', 'order_details.product_id', '=', 'products.id')
+          ->selectRaw('products.name as product_name, SUM(order_details.qty) as total')
+          ->groupBy('order_details.product_id', 'products.name')
+          ->get()
+          ->pluck('total', 'product_name');
 
-        // Ambil daftar nama produk (bisa disiapkan untuk digunakan jika diperlukan)
-        $productNames = $soldProducts->keys();
+      // Ambil daftar nama produk
+      $productNames = $soldProducts->keys()->toArray();
 
-        // Jumlah produk yang terjual
-        $soldQuantities = $soldProducts->values();
+      // Jumlah produk yang terjual
+      $soldQuantities = $soldProducts->values()->toArray();
 
-
-        // Kirim data ke view 'dashboard'
-        return view('dashboard', compact(
-            'totalCustomers', 'totalProducts', 'monthlyRevenue', 'ordersToShip',
-            'soldQuantities', 'productNames'
-        ));
+      // Kirim data ke view 'dashboard'
+      return view('dashboard', compact(
+          'totalCustomers', 'totalProducts', 'monthlyRevenue', 'ordersToShip',
+          'soldQuantities', 'productNames'
+      ));
   }
+
 
     public function getData(Request $request)
     {
