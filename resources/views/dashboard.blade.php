@@ -84,6 +84,7 @@
             // Ambil data yang diberikan oleh controller
             var soldQuantities = @json($soldQuantities);
             var productNames = @json($productNames);
+            
 
             // Inisialisasi grafik bar
             var soldProductsCtx = document.getElementById('soldProductsChart').getContext('2d');

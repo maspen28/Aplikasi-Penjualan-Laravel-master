@@ -30,13 +30,14 @@ class DashboardController extends Controller {
         $soldProducts = OrderDetail::selectRaw('product_id, SUM(qty) as total')
             ->groupBy('product_id')
             ->get()
-            ->pluck('cost', 'product_id');
+            ->pluck('total', 'product_id');
 
         // Ambil daftar nama produk (bisa disiapkan untuk digunakan jika diperlukan)
         $productNames = $soldProducts->keys();
 
         // Jumlah produk yang terjual
         $soldQuantities = $soldProducts->values();
+
 
         // Kirim data ke view 'dashboard'
         return view('dashboard', compact(
