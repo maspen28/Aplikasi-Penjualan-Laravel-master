@@ -74,7 +74,7 @@
                                                 @endforeach
                                             </td>
                                             <td>Rp {{ number_format($row->ongkos_kirim) }}</td>
-                                            <td>Rp {{ number_format($row->subtotal) }}</td>
+                                            <td>Rp {{ number_format($row->cost) }}</td>
                                             <td>{{ $row->created_at->format('d-m-Y') }}</td>
                                         </tr>
                                         @empty
