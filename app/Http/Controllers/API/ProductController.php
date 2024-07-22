@@ -106,13 +106,32 @@ public static function cart(Request $request) {
 
     public static function removeFromCart(Request $request) {
         $cart_id = $request->input('id'); // Mengambil cart_id dari request
+        if (!$cart_id) {
+            // Jika cart_id tidak ada di request, kembalikan respons gagal
+            return ApiResponseUtils::failed('Cart ID is required');
+        }
+
+        // Menambahkan log untuk memastikan cart_id diterima
+        \Log::info('Removing cart item with ID: ' . $cart_id);
+
         $cart = Cart::find($cart_id); // Mencari cart berdasarkan cart_id
 
         if ($cart) {
+            // Menambahkan log sebelum menghapus
+            \Log::info('Cart item found: ' . json_encode($cart));
+
             $cart->delete(); // Menghapus cart jika ditemukan
-            return ApiResponseUtils::success();
+
+            // Menambahkan log setelah menghapus
+            \Log::info('Cart item deleted successfully.');
+
+            // Memberikan argumen yang diperlukan ke metode success()
+            return ApiResponseUtils::success('Cart item deleted successfully');
         } else {
+            // Menambahkan log jika cart tidak ditemukan
+            \Log::warning('Cart item not found for ID: ' . $cart_id);
             return ApiResponseUtils::failed('Cart item not found');
         }
     }
+
 }
