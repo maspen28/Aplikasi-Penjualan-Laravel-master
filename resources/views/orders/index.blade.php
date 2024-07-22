@@ -79,14 +79,10 @@
                                                     {{ $row->customer->district->citie->postal_code ?? '-' }}
                                                 </label>
                                             </td>
-                                            <td> <!-- Kolom Produk -->
-                                                @if ($row->orderDetails && $row->orderDetails->count() > 0)
-                                                    @foreach ($row->orderDetails as $detail)
-                                                        {{ $detail->product->name }}<br>
-                                                    @endforeach
-                                                @else
-                                                    <span>Tidak ada produk</span>
-                                                @endif
+                                            <td>
+                                                @foreach ($row->details as $item)
+                                                <li>{{ $item->product->name }} - {{ $item->qty }} item</li>
+                                                @endforeach
                                             </td>
                                             <td>Rp {{ number_format($row->ongkos_kirim) }}</td>
                                             <td>Rp {{ number_format($row->cost) }}</td>
