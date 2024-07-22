@@ -48,6 +48,8 @@
                                         <tr>
                                             <th>InvoiceID</th>
                                             <th>Pelanggan</th>
+                                            <th>Produk</th>
+                                            <th>Jumlah Ongkir</th>
                                             <th>Total</th>
                                             <th>Tanggal</th>
                                         </tr>
@@ -66,6 +68,12 @@
                                                     {{ optional($row->citie)->postal_code }}
                                                 </label>
                                             </td>
+                                            <td>
+                                                @foreach ($row->details as $item)
+                                                <li>{{ $item->product->name }} - {{ $item->qty }} item</li>
+                                                @endforeach
+                                            </td>
+                                            <td>Rp {{ number_format($row->ongkos_kirim) }}</td>
                                             <td>Rp {{ number_format($row->subtotal) }}</td>
                                             <td>{{ $row->created_at->format('d-m-Y') }}</td>
                                         </tr>
