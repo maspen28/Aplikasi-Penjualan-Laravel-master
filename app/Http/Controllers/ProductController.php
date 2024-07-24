@@ -25,6 +25,7 @@ class ProductController extends Controller
         // Ambil kategori dari database
         $category = Category::orderBy('name', 'DESC')->get();
         $discount = Discount::orderBy('discount_name', 'DESC')->get();
+        
 
         return view('produk.produk', compact('product', 'category', 'stockHistories', 'discount'));
     }
@@ -70,7 +71,7 @@ class ProductController extends Controller
                 'price' => $request->price,
                 'weight' => $request->weight,
                 'discount_id' => $request->discount_id,
-                // 'stock' => $request->stock,
+                'stock' => 0,
                 'status' => $request->status
             ]);
             //JIKA SUDAH MAKA REDIRECT KE LIST PRODUK
@@ -89,33 +90,33 @@ class ProductController extends Controller
         return redirect(route('product.index'))->with(['success' => 'Produk Sudah Dihapus']);
     }
 
-    public function massUploadForm()
-    {
-        $category = Category::orderBy('name', 'DESC')->get();
-        return view('produk.bulk', compact('category'));
-    }
+    // public function massUploadForm()
+    // {
+    //     $category = Category::orderBy('name', 'DESC')->get();
+    //     return view('produk.bulk', compact('category'));
+    // }
 
-    public function massUpload(Request $request)
-    {
-    //VALIDASI DATA YANG DIKIRIM
-        $this->validate($request, [
-            'category_id' => 'required|exists:categories,id',
-            'file' => 'required|mimes:xlsx' //PASTIKAN FORMAT FILE YANG DITERIMA ADALAH XLSX
-        ]);
+    // public function massUpload(Request $request)
+    // {
+    // //VALIDASI DATA YANG DIKIRIM
+    //     $this->validate($request, [
+    //         'category_id' => 'required|exists:categories,id',
+    //         'file' => 'required|mimes:xlsx' //PASTIKAN FORMAT FILE YANG DITERIMA ADALAH XLSX
+    //     ]);
 
-        //JIKA FILE-NYA ADA
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filename = time() . '-product.' . $file->getClientOriginalExtension();
-            $file->storeAs('public/uploads', $filename); //MAKA SIMPAN FILE TERSEBUT DI STORAGE/APP/PUBLIC/UPLOADS
+    //     //JIKA FILE-NYA ADA
+    //     if ($request->hasFile('file')) {
+    //         $file = $request->file('file');
+    //         $filename = time() . '-product.' . $file->getClientOriginalExtension();
+    //         $file->storeAs('public/uploads', $filename); //MAKA SIMPAN FILE TERSEBUT DI STORAGE/APP/PUBLIC/UPLOADS
 
-            //BUAT JADWAL UNTUK PROSES FILE TERSEBUT DENGAN MENGGUNAKAN JOB
-            //ADAPUN PADA DISPATCH KITA MENGIRIMKAN DUA PARAMETER SEBAGAI INFORMASI
-            //YAKNI KATEGORI ID DAN NAMA FILENYA YANG SUDAH DISIMPAN
-            ProductJob::dispatch($request->category_id, $filename);
-            return redirect()->back()->with(['success' => 'Upload Produk Dijadwalkan']);
-        }
-    }
+    //         //BUAT JADWAL UNTUK PROSES FILE TERSEBUT DENGAN MENGGUNAKAN JOB
+    //         //ADAPUN PADA DISPATCH KITA MENGIRIMKAN DUA PARAMETER SEBAGAI INFORMASI
+    //         //YAKNI KATEGORI ID DAN NAMA FILENYA YANG SUDAH DISIMPAN
+    //         ProductJob::dispatch($request->category_id, $filename);
+    //         return redirect()->back()->with(['success' => 'Upload Produk Dijadwalkan']);
+    //     }
+    // }
 
     public function edit($id)
     {

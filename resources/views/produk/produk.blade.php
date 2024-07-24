@@ -159,11 +159,11 @@
                                         <input type="number" name="price" class="form-control" value="{{ old('price') }}" required>
                                         <p class="text-danger">{{ $errors->first('price') }}</p>
                                     </div>
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                         <label for="stock">Stok</label>
                                         <input type="number" name="stock" class="form-control" value="{{ old('stock') }}" required>
                                         <p class="text-danger">{{ $errors->first('stock') }}</p>
-                                    </div>
+                                    </div> -->
                                     <div class="form-group">
                                         <label for="discount_id">Diskon</label>
                                         <select name="discount_id" class="form-control" required>
@@ -347,7 +347,7 @@
                     @forelse ($stockHistories as $index => $history)
                     <tr>
                         <td>{{ $stockHistories->firstItem() + $index }}</td>
-                        <td>{{ $history->product->name }}</td>
+                        <td>{{ optional($history->product)->name ?? 'N/A' }}</td>
                         <td>{{ $history->added_stock }}</td>
                         <td>{{ $history->updated_at->format('d-m-Y H:i') }}</td>
                     </tr>
