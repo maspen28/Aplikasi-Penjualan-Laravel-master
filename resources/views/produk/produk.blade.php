@@ -166,13 +166,12 @@
                                     </div> -->
                                     <div class="form-group">
                                         <label for="discount_id">Diskon</label>
-                                        <select name="discount_id" class="form-control" required>
+                                        <select name="discount_id" class="form-control">
                                             <option value="">Pilih</option>
                                             @foreach ($discount as $row)
                                             <option value="{{ $row->id }}">{{ $row->discount_name }}</option>
                                             @endforeach
                                         </select>
-                                        <p class="text-danger">{{ $errors->first('discount_id') }}</p>
                                     </div>
                                     <div class="form-group">
                                         <label for="status">Status</label>
