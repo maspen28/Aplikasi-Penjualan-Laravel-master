@@ -6,75 +6,85 @@ use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller {
-  public function show($id) {
-    $customer = Customer::find($id);
-    if ($customer) {
-      return view('costumer.show', compact('customer'));
-    } else {
-      // Handle if customer not found
-      return redirect()->route('customers.index')->withErrors('Customer not found');
-    }
+  public function index(Request $request) {
+    $currentMonth = str_pad($request->input('month', date('m')), 2, '0', STR_PAD_LEFT);
+    $currentYear = $request->input('year', date('Y'));
+
+    $totalCustomers = Customer::count();
+    $totalProducts = Product::count();
+    $monthlyRevenue = Order::whereMonth('created_at', $currentMonth)
+      ->whereYear('created_at', $currentYear)
+      ->sum('cost');
+    $ordersToShip = Order::where('status', 3)->count();
+
+    $soldProducts = OrderDetail::join('products', 'order_details.product_id', '=', 'products.id')
+      ->selectRaw('products.name as product_name, SUM(order_details.qty) as total')
+      ->whereMonth('order_details.created_at', $currentMonth)
+      ->whereYear('order_details.created_at', $currentYear)
+      ->groupBy('order_details.product_id', 'products.name')
+      ->get()
+      ->pluck('total', 'product_name');
+
+    $productNames = $soldProducts->keys()->toArray();
+    $soldQuantities = $soldProducts->values()->toArray();
+
+    $chartData = [
+      'productNames' => $productNames,
+      'soldQuantities' => $soldQuantities,
+    ];
+
+    return view('dashboard', compact(
+      'totalCustomers', 'totalProducts', 'monthlyRevenue', 'ordersToShip',
+      'soldQuantities', 'productNames', 'currentMonth', 'currentYear', 'chartData'
+    ));
   }
 
-  public function index() {
+  public function filter(Request $request) {
+    try {
+      $month = str_pad($request->input('month'), 2, '0', STR_PAD_LEFT);
+      $year = $request->input('year');
+
+      Log::info("Filtering for month: $month and year: $year");
+
       $totalCustomers = Customer::count();
       $totalProducts = Product::count();
-      $monthlyRevenue = Order::whereMonth('created_at', date('m'))->sum('cost'); // pastikan ini float/integer
+      $monthlyRevenue = Order::whereMonth('created_at', $month)
+        ->whereYear('created_at', $year)
+        ->sum('cost');
       $ordersToShip = Order::where('status', 3)->count();
 
-      // Query untuk mengambil data jumlah produk yang terjual dari orders_detail dan nama produk dari products
       $soldProducts = OrderDetail::join('products', 'order_details.product_id', '=', 'products.id')
-          ->selectRaw('products.name as product_name, SUM(order_details.qty) as total')
-          ->groupBy('order_details.product_id', 'products.name')
-          ->get()
-          ->pluck('total', 'product_name');
+        ->selectRaw('products.name as product_name, SUM(order_details.qty) as total')
+        ->whereMonth('order_details.created_at', $month)
+        ->whereYear('order_details.created_at', $year)
+        ->groupBy('order_details.product_id', 'products.name')
+        ->get()
+        ->pluck('total', 'product_name');
 
-      // Ambil daftar nama produk
       $productNames = $soldProducts->keys()->toArray();
-
-      // Jumlah produk yang terjual
       $soldQuantities = $soldProducts->values()->toArray();
 
-      // Kirim data ke view 'dashboard'
-      return view('dashboard', compact(
-          'totalCustomers', 'totalProducts', 'monthlyRevenue', 'ordersToShip',
-          'soldQuantities', 'productNames'
-      ));
-  }
+      Log::info("Data filtered successfully for month: $month and year: $year");
 
-
-    public function getData(Request $request)
-    {
-        // Ambil bulan dan tahun dari request, defaultnya saat ini jika tidak ada
-        $month = $request->input('month', date('m'));
-        $year = $request->input('year', date('Y'));
-
-        // Buat tanggal mulai dan akhir berdasarkan bulan dan tahun yang dipilih
-        $startDate = Carbon::createFromDate($year, $month, 1);
-        $endDate = $startDate->copy()->endOfMonth();
-
-        // Query untuk mengambil data jumlah produk yang terjual dari orders_detail
-        $soldProducts = OrderDetail::whereHas('order', function ($query) use ($startDate, $endDate) {
-                $query->whereBetween('created_at', [$startDate, $endDate]);
-            })
-            ->selectRaw('product_id, SUM(qty) as total')
-            ->groupBy('product_id')
-            ->get()
-            ->pluck('cost', 'product_id');
-
-        // Ambil daftar nama produk (bisa disiapkan untuk digunakan jika diperlukan)
-        $productNames = $soldProducts->keys();
-
-        // Jumlah produk yang terjual
-        $soldQuantities = $soldProducts->values();
-
-        return view('dashboard', [
-            'soldQuantities' => $soldQuantities,
-            'productNames' => $productNames,
-        ]);
+      return response()->json([
+        'totalCustomers' => $totalCustomers,
+        'totalProducts' => $totalProducts,
+        'monthlyRevenue' => $monthlyRevenue,
+        'ordersToShip' => $ordersToShip,
+        'chartData' => [
+          'soldQuantities' => $soldQuantities,
+          'productNames' => $productNames,
+        ],
+      ]);
+    } catch (\Exception $e) {
+      Log::error('Error in filter method: ' . $e->getMessage());
+      return response()->json(['error' => 'Something went wrong'], 500);
     }
+  }
 }
+
+

@@ -14,8 +14,36 @@
     </ol>
     <div class="container-fluid">
         <div class="animated fadeIn">
-            <!-- Dashboard Content -->
+            
+            <!-- Filter Form -->
             <div class="row">
+                <div class="col-md-12">
+                    <form id="filterForm" class="form-inline">
+                        <div class="form-group mr-2">
+                            <label for="month" class="mr-2">Bulan:</label>
+                            <select id="month" name="month" class="form-control">
+                                @for ($i = 1; $i <= 12; $i++)
+                                    <option value="{{ $i }}" {{ $i == $currentMonth ? 'selected' : '' }}>
+                                        {{ DateTime::createFromFormat('!m', $i)->format('F') }}
+                                    </option>
+                                @endfor
+                            </select>
+                        </div>
+                        <div class="form-group mr-2">
+                            <label for="year" class="mr-2">Tahun:</label>
+                            <select id="year" name="year" class="form-control">
+                                @for ($i = 2020; $i <= now()->year; $i++)
+                                    <option value="{{ $i }}" {{ $i == $currentYear ? 'selected' : '' }}>{{ $i }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- End of Filter Form -->
+            
+            <!-- Dashboard Content -->
+            <div class="row mt-4">
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
@@ -58,7 +86,7 @@
             </div>
 
             <!-- Row for charts -->
-            <div class="row">
+            <div class="row mt-4">
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
@@ -82,9 +110,8 @@
     <script>
         $(document).ready(function() {
             // Ambil data yang diberikan oleh controller
-            var soldQuantities = @json($soldQuantities);
-            var productNames = @json($productNames);
-            
+            var soldQuantities = @json($chartData['soldQuantities']);
+            var productNames = @json($chartData['productNames']);
 
             // Inisialisasi grafik bar
             var soldProductsCtx = document.getElementById('soldProductsChart').getContext('2d');
@@ -113,6 +140,45 @@
                     }
                 }
             });
+
+        function submitFilterForm() {
+            var month = $('#month').val().padStart(2, '0');
+            var year = $('#year').val();
+
+            console.log("Filtering for month: " + month + " and year: " + year);
+
+            $.ajax({
+                url: '{{ route("dashboard.filter") }}',
+                type: 'GET',
+                data: {
+                    month: month,
+                    year: year
+                },
+                success: function(data) {
+                    // Update data pada halaman dashboard
+                    $('.callout-danger .h4').text(data.totalCustomers);
+                    $('.callout-success .h4').text(data.totalProducts);
+                    $('.callout-info .h4').text('Rp ' + new Intl.NumberFormat().format(data.monthlyRevenue));
+                    $('.callout-primary .h4').text(data.ordersToShip);
+
+                    // Update data pada grafik
+                    soldProductsChart.data.labels = data.chartData.productNames;
+                    soldProductsChart.data.datasets[0].data = data.chartData.soldQuantities;
+                    soldProductsChart.update();
+                },
+                error: function(xhr) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+
+        $('#month, #year').change(function() {
+            submitFilterForm();
         });
+
+        // Submit form saat halaman pertama kali dimuat untuk mendapatkan data awal
+        submitFilterForm();
+    });    
     </script>
 @stop
+

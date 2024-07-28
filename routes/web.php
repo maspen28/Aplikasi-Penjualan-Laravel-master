@@ -42,7 +42,8 @@ Route::get('/coba', function () {
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 // Route in web.php
-Route::get('/dashboard/data', [DashboardController::class, 'getData'])->name('dashboard.data');
+Route::get('/dashboard/filter', [DashboardController::class, 'filter'])->name('dashboard.filter');
+
 
 
 Route::group(['middleware' => ['auth']], function () {
