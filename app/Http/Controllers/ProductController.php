@@ -134,7 +134,7 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|integer',
             'weight' => 'required|integer',
-            'discount_id' => 'required|exists:discounts,id',
+            // 'discount_id' => 'required|exists:discounts,id',
             'image' => 'nullable|image|mimes:png,jpeg,jpg' //IMAGE BISA NULLABLE
         ]);
 

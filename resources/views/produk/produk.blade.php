@@ -270,7 +270,7 @@
                     </div>
                     <div class="form-group">
                         <label for="discount_id">Diskon</label>
-                        <select name="discount_id" class="form-control" required>
+                        <select name="discount_id" class="form-control">
                             <option value="">Pilih</option>
                         @foreach ($discount as $dis)
                             <option value="{{ $dis->id }}" {{ $row->discount_id == $dis->id ? 'selected' : '' }}>{{ $dis->discount_name }}</option>
