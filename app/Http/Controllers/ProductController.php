@@ -165,23 +165,33 @@ class ProductController extends Controller
         return redirect(route('product.index'))->with(['success' => 'Data Produk Diperbaharui']);
     }
 
-    public function addStock(Request $request, $id)
+    public function addStock(Request $request)
     {
         $request->validate([
-            'stock' => 'required|integer|min:1'
+            'product_id' => 'required|exists:products,id',
+            'added_stock' => 'required|integer|min:1',
+            'harga_beli' => 'required|numeric|min:0',
+            'total_beli' => 'required|numeric|min:0',
+            'price' => 'required|numeric|min:0',
+            'profit' => 'required|numeric|min:0'
         ]);
 
-        $product = Product::findOrFail($id);
-        $product->stock += $request->input('stock');
+        $product = Product::findOrFail($request->input('product_id'));
+        $product->stock += $request->input('added_stock');
+        $product->price = $request->input('price'); // Update selling price in products table
         $product->save();
 
-        // Simpan riwayat penambahan stok
+        // Save stock history
         StockHistory::create([
             'product_id' => $product->id,
-            'added_stock' => $request->input('stock')
+            'added_stock' => $request->input('added_stock'),
+            'harga_beli' => $request->input('harga_beli'),
+            'total_beli' => $request->input('total_beli'),
+            'profit' => $request->input('profit')
         ]);
 
         return redirect()->route('product.index')->with('success', 'Stok produk berhasil ditambahkan');
     }
+
 
 }

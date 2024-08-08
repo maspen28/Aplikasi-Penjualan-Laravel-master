@@ -71,6 +71,7 @@
                                             <td>
                                                 @foreach ($row->details as $item)
                                                 <li>{{ $item->product->name }} - {{ $item->qty }} item</li>
+                                                <li>{{ $item->product->price }}</li>
                                                 @endforeach
                                             </td>
                                             <td>Rp {{ number_format($row->ongkos_kirim) }}</td>

@@ -22,7 +22,10 @@
                                 List Product
                                 @if (Auth::user()->id_privileges == 1)
                                 <div class="float-right">
-                                    <button class="btn btn-primary btn-sm ml-3" data-toggle="modal" data-target="#addProductModal">Tambah</button>
+                                    <button class="btn btn-primary btn-sm ml-3" data-toggle="modal" data-target="#addProductModal">Tambah Produk</button>
+                                </div>
+                                <div class="float-right">
+                                    <button class="btn btn-primary btn-sm ml-3" data-toggle="modal" data-target="#addStockModal">Catat Pembelian Stok</button>
                                 </div>
                                 @endif
                             </h4>
@@ -79,10 +82,6 @@
                                                 <!-- Button trigger modal -->
                                                 <button type="button" class="btn btn-warning btn-sm mb-3" data-toggle="modal" data-target="#editProductModal{{ $row->id }}">
                                                     Edit
-                                                </button>
-                                                <!-- Tambah Stok Button trigger modal -->
-                                                <button type="button" class="btn btn-primary btn-sm mb-3" data-toggle="modal" data-target="#addStockModal{{ $row->id }}">
-                                                    Tambah Stok
                                                 </button>
                                                 <form action="{{ route('product.destroy', $row->id) }}" method="post">
                                                     @csrf
@@ -298,7 +297,7 @@
 
 <!-- Modal Tambah Stok -->
 @foreach ($product as $row)
-<div class="modal fade" id="addStockModal{{ $row->id }}" tabindex="-1" aria-labelledby="addStockModalLabel" aria-hidden="true">
+<div class="modal fade" id="addStockModal" tabindex="-1" aria-labelledby="addStockModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -308,12 +307,42 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('product.addStock', $row->id) }}" method="post">
+                <form action="{{ route('product.addStock') }}" method="post">
                     @csrf
                     <div class="form-group">
-                        <label for="stock">Jumlah Stok</label>
-                        <input type="number" name="stock" class="form-control" value="{{ old('stock') }}" required>
-                        <p class="text-danger">{{ $errors->first('stock') }}</p>
+                        <label for="product_id">Pilih Produk</label>
+                        <select name="product_id" class="form-control" required>
+                            <option value="">Pilih Produk</option>
+                            @foreach ($product as $prod)
+                                <option value="{{ $prod->id }}">{{ $prod->name }}</option>
+                            @endforeach
+                        </select>
+                        <p class="text-danger">{{ $errors->first('product_id') }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="added_stock">Jumlah Stok</label>
+                        <input type="number" id="added_stock" name="added_stock" class="form-control" value="{{ old('added_stock') }}" required>
+                        <p class="text-danger">{{ $errors->first('added_stock') }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="harga_beli">Harga Beli per Satuan</label>
+                        <input type="number" id="harga_beli" name="harga_beli" class="form-control" value="{{ old('harga_beli') }}" required>
+                        <p class="text-danger">{{ $errors->first('harga_beli') }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="total_beli">Total Harga Beli</label>
+                        <input type="number" id="total_beli" name="total_beli" class="form-control" value="{{ old('total_beli') }}" readonly required>
+                        <p class="text-danger">{{ $errors->first('total_beli') }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Harga Jual per Satuan</label>
+                        <input type="number" id="price" name="price" class="form-control" value="{{ old('price') }}" required>
+                        <p class="text-danger">{{ $errors->first('price') }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="profit">Keuntungan per Satuan</label>
+                        <input type="number" id="profit" name="profit" class="form-control" value="{{ old('profit') }}" readonly required>
+                        <p class="text-danger">{{ $errors->first('profit') }}</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -339,6 +368,7 @@
                         <th>#</th>
                         <th>Produk</th>
                         <th>Jumlah Stok Ditambahkan</th>
+                        <th>Harga Beli satuan</th>
                         <th>Tanggal Penambahan</th>
                     </tr>
                 </thead>
@@ -348,6 +378,7 @@
                         <td>{{ $stockHistories->firstItem() + $index }}</td>
                         <td>{{ optional($history->product)->name ?? 'N/A' }}</td>
                         <td>{{ $history->added_stock }}</td>
+                        <td>{{ $history->harga_beli }}</td>
                         <td>{{ $history->updated_at->format('d-m-Y H:i') }}</td>
                     </tr>
                     @empty
@@ -394,5 +425,23 @@
             }
         });
     </script>
-@stop
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function updateTotalAndProfit() {
+                const addedStock = parseFloat(document.getElementById('added_stock').value) || 0;
+                const hargaBeli = parseFloat(document.getElementById('harga_beli').value) || 0;
+                const price = parseFloat(document.getElementById('price').value) || 0;
+                const totalBeli = addedStock * hargaBeli;
+                const profit = price - hargaBeli;
+
+                document.getElementById('total_beli').value = totalBeli;
+                document.getElementById('profit').value = profit;
+            }
+
+            document.getElementById('added_stock').addEventListener('input', updateTotalAndProfit);
+            document.getElementById('harga_beli').addEventListener('input', updateTotalAndProfit);
+            document.getElementById('price').addEventListener('input', updateTotalAndProfit);
+        });
+    </script>
+@stop

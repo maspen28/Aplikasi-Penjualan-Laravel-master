@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class StockHistory extends Model
 {
 
-    protected $fillable = ['product_id', 'added_stock', 'updated_at'];
+    protected $fillable = ['product_id', 'added_stock', 'harga_beli', 'total_beli', 'profit', 'updated_at'];
 
     public function product()
     {

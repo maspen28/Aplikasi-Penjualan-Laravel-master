@@ -55,7 +55,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('product/{product_id}/edit', [ProductController::class, 'edit'])->name('product.edit');
     Route::put('product/{product_id}', [ProductController::class, 'update'])->name('product.update');
     Route::delete('product/{product_id}', [ProductController::class, 'destroy'])->name('product.destroy');
-    Route::post('product/{id}/add-stock', [ProductController::class, 'addStock'])->name('product.addStock');
+    // Route::post('product/{id}/add-stock', [ProductController::class, 'addStock'])->name('product.addStock');
+    Route::post('product/addStock', [ProductController::class, 'addStock'])->name('product.addStock');
 
 /* route discount master */
     Route::get('auth/discount', [DiscountController::class, 'index'])->name('discount.index');
